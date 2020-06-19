@@ -1,0 +1,18 @@
+{
+	"home_page_title": "Concept Shop Home",
+	"blog_page_title": "Blog",
+	"sliders": {
+		"revslider": "slider-1.zip"
+	},
+	"menus": {
+		"primary": "Main nav"
+	},
+	"templates": {
+		"header-template": "Concept Shop Header",
+		"footer-template": "Concept Shop Footer"
+	},
+	"content_plugins": {
+		"revslider": "Slider Revolution",
+		"woocommerce": "Woocommerce"
+	}
+}

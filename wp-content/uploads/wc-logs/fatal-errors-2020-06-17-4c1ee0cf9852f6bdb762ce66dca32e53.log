@@ -1,0 +1,618 @@
+2020-06-17T16:18:05+00:00 CRITICAL Uncaught Error: Call to a member function get_cart() on null in /var/www/html/wp-content/themes/a-one/functions.php:5
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(287): hpp_tooltip_woocommerce_product_title('Casual Blouse', 53)
+#1 /var/www/html/wp-includes/plugin.php(206): WP_Hook->apply_filters('Casual Blouse', Array)
+#2 /var/www/html/wp-includes/post-template.php(171): apply_filters('the_title', 'Casual Blouse', 53)
+#3 /var/www/html/wp-admin/includes/template.php(1924): get_the_title(Object(WP_Post))
+#4 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(925): _draft_or_post_title()
+#5 /var/www/html/wp-admin/includes/class-wp-list-table.php(1344): WP_Posts_List_Table->column_cb(Object(WP_Post))
+#6 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(1298): WP_List_Table->single_row_columns(Object(WP_Post))
+#7 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(741): WP_Posts_List_Table->single_row(Object(WP_Post), 0)
+#8 /var/www/html/wp-admin/includes/class-wp-pos in /var/www/html/wp-content/themes/a-one/functions.php on line 5
+
+2020-06-17T16:18:09+00:00 CRITICAL Uncaught Error: Call to a member function get_cart() on null in /var/www/html/wp-content/themes/a-one/functions.php:5
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(287): hpp_tooltip_woocommerce_product_title('Casual Blouse', 53)
+#1 /var/www/html/wp-includes/plugin.php(206): WP_Hook->apply_filters('Casual Blouse', Array)
+#2 /var/www/html/wp-includes/post-template.php(171): apply_filters('the_title', 'Casual Blouse', 53)
+#3 /var/www/html/wp-admin/includes/template.php(1924): get_the_title(Object(WP_Post))
+#4 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(925): _draft_or_post_title()
+#5 /var/www/html/wp-admin/includes/class-wp-list-table.php(1344): WP_Posts_List_Table->column_cb(Object(WP_Post))
+#6 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(1298): WP_List_Table->single_row_columns(Object(WP_Post))
+#7 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(741): WP_Posts_List_Table->single_row(Object(WP_Post), 0)
+#8 /var/www/html/wp-admin/includes/class-wp-pos in /var/www/html/wp-content/themes/a-one/functions.php on line 5
+
+2020-06-17T16:18:12+00:00 CRITICAL Uncaught Error: Call to a member function get_cart() on null in /var/www/html/wp-content/themes/a-one/functions.php:5
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(287): hpp_tooltip_woocommerce_product_title('Casual Blouse', 53)
+#1 /var/www/html/wp-includes/plugin.php(206): WP_Hook->apply_filters('Casual Blouse', Array)
+#2 /var/www/html/wp-includes/post-template.php(171): apply_filters('the_title', 'Casual Blouse', 53)
+#3 /var/www/html/wp-admin/includes/template.php(1924): get_the_title(Object(WP_Post))
+#4 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(925): _draft_or_post_title()
+#5 /var/www/html/wp-admin/includes/class-wp-list-table.php(1344): WP_Posts_List_Table->column_cb(Object(WP_Post))
+#6 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(1298): WP_List_Table->single_row_columns(Object(WP_Post))
+#7 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(741): WP_Posts_List_Table->single_row(Object(WP_Post), 0)
+#8 /var/www/html/wp-admin/includes/class-wp-pos in /var/www/html/wp-content/themes/a-one/functions.php on line 5
+
+2020-06-17T16:18:15+00:00 CRITICAL Uncaught Error: Call to a member function get_cart() on null in /var/www/html/wp-content/themes/a-one/functions.php:5
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(287): hpp_tooltip_woocommerce_product_title('Casual Blouse', 53)
+#1 /var/www/html/wp-includes/plugin.php(206): WP_Hook->apply_filters('Casual Blouse', Array)
+#2 /var/www/html/wp-includes/post-template.php(171): apply_filters('the_title', 'Casual Blouse', 53)
+#3 /var/www/html/wp-admin/includes/template.php(1924): get_the_title(Object(WP_Post))
+#4 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(925): _draft_or_post_title()
+#5 /var/www/html/wp-admin/includes/class-wp-list-table.php(1344): WP_Posts_List_Table->column_cb(Object(WP_Post))
+#6 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(1298): WP_List_Table->single_row_columns(Object(WP_Post))
+#7 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(741): WP_Posts_List_Table->single_row(Object(WP_Post), 0)
+#8 /var/www/html/wp-admin/includes/class-wp-pos in /var/www/html/wp-content/themes/a-one/functions.php on line 5
+
+2020-06-17T16:18:20+00:00 CRITICAL Uncaught Error: Call to a member function get_cart() on null in /var/www/html/wp-content/themes/a-one/functions.php:5
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(287): hpp_tooltip_woocommerce_product_title('Casual Blouse', 53)
+#1 /var/www/html/wp-includes/plugin.php(206): WP_Hook->apply_filters('Casual Blouse', Array)
+#2 /var/www/html/wp-includes/post-template.php(171): apply_filters('the_title', 'Casual Blouse', 53)
+#3 /var/www/html/wp-admin/includes/template.php(1924): get_the_title(Object(WP_Post))
+#4 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(925): _draft_or_post_title()
+#5 /var/www/html/wp-admin/includes/class-wp-list-table.php(1344): WP_Posts_List_Table->column_cb(Object(WP_Post))
+#6 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(1298): WP_List_Table->single_row_columns(Object(WP_Post))
+#7 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(741): WP_Posts_List_Table->single_row(Object(WP_Post), 0)
+#8 /var/www/html/wp-admin/includes/class-wp-pos in /var/www/html/wp-content/themes/a-one/functions.php on line 5
+
+2020-06-17T16:18:31+00:00 CRITICAL Uncaught Error: Call to a member function get_cart() on null in /var/www/html/wp-content/themes/a-one/functions.php:5
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(287): hpp_tooltip_woocommerce_product_title('Casual Blouse', 53)
+#1 /var/www/html/wp-includes/plugin.php(206): WP_Hook->apply_filters('Casual Blouse', Array)
+#2 /var/www/html/wp-includes/post-template.php(171): apply_filters('the_title', 'Casual Blouse', 53)
+#3 /var/www/html/wp-admin/includes/template.php(1924): get_the_title(Object(WP_Post))
+#4 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(925): _draft_or_post_title()
+#5 /var/www/html/wp-admin/includes/class-wp-list-table.php(1344): WP_Posts_List_Table->column_cb(Object(WP_Post))
+#6 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(1298): WP_List_Table->single_row_columns(Object(WP_Post))
+#7 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(741): WP_Posts_List_Table->single_row(Object(WP_Post), 0)
+#8 /var/www/html/wp-admin/includes/class-wp-pos in /var/www/html/wp-content/themes/a-one/functions.php on line 5
+
+2020-06-17T16:18:37+00:00 CRITICAL Uncaught Error: Call to a member function get_cart() on null in /var/www/html/wp-content/themes/a-one/functions.php:5
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(287): hpp_tooltip_woocommerce_product_title('Casual Blouse', 53)
+#1 /var/www/html/wp-includes/plugin.php(206): WP_Hook->apply_filters('Casual Blouse', Array)
+#2 /var/www/html/wp-includes/post-template.php(171): apply_filters('the_title', 'Casual Blouse', 53)
+#3 /var/www/html/wp-admin/includes/template.php(1924): get_the_title(Object(WP_Post))
+#4 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(925): _draft_or_post_title()
+#5 /var/www/html/wp-admin/includes/class-wp-list-table.php(1344): WP_Posts_List_Table->column_cb(Object(WP_Post))
+#6 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(1298): WP_List_Table->single_row_columns(Object(WP_Post))
+#7 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(741): WP_Posts_List_Table->single_row(Object(WP_Post), 0)
+#8 /var/www/html/wp-admin/includes/class-wp-pos in /var/www/html/wp-content/themes/a-one/functions.php on line 5
+
+2020-06-17T16:18:42+00:00 CRITICAL Uncaught Error: Call to a member function get_cart() on null in /var/www/html/wp-content/themes/a-one/functions.php:5
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(287): hpp_tooltip_woocommerce_product_title('Casual Blouse', 53)
+#1 /var/www/html/wp-includes/plugin.php(206): WP_Hook->apply_filters('Casual Blouse', Array)
+#2 /var/www/html/wp-includes/post-template.php(171): apply_filters('the_title', 'Casual Blouse', 53)
+#3 /var/www/html/wp-admin/includes/template.php(1924): get_the_title(Object(WP_Post))
+#4 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(925): _draft_or_post_title()
+#5 /var/www/html/wp-admin/includes/class-wp-list-table.php(1344): WP_Posts_List_Table->column_cb(Object(WP_Post))
+#6 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(1298): WP_List_Table->single_row_columns(Object(WP_Post))
+#7 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(741): WP_Posts_List_Table->single_row(Object(WP_Post), 0)
+#8 /var/www/html/wp-admin/includes/class-wp-pos in /var/www/html/wp-content/themes/a-one/functions.php on line 5
+
+2020-06-17T16:19:44+00:00 CRITICAL Uncaught Error: Call to a member function get_cart() on null in /var/www/html/wp-content/themes/a-one/functions.php:5
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(287): hpp_tooltip_woocommerce_product_title('Casual Blouse', 53)
+#1 /var/www/html/wp-includes/plugin.php(206): WP_Hook->apply_filters('Casual Blouse', Array)
+#2 /var/www/html/wp-includes/post-template.php(171): apply_filters('the_title', 'Casual Blouse', 53)
+#3 /var/www/html/wp-admin/includes/template.php(1924): get_the_title(Object(WP_Post))
+#4 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(925): _draft_or_post_title()
+#5 /var/www/html/wp-admin/includes/class-wp-list-table.php(1344): WP_Posts_List_Table->column_cb(Object(WP_Post))
+#6 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(1298): WP_List_Table->single_row_columns(Object(WP_Post))
+#7 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(741): WP_Posts_List_Table->single_row(Object(WP_Post), 0)
+#8 /var/www/html/wp-admin/includes/class-wp-pos in /var/www/html/wp-content/themes/a-one/functions.php on line 5
+
+2020-06-17T16:19:53+00:00 CRITICAL Uncaught Error: Call to a member function get_cart() on null in /var/www/html/wp-content/themes/a-one/functions.php:5
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(287): hpp_tooltip_woocommerce_product_title('Casual Blouse', 53)
+#1 /var/www/html/wp-includes/plugin.php(206): WP_Hook->apply_filters('Casual Blouse', Array)
+#2 /var/www/html/wp-includes/post-template.php(171): apply_filters('the_title', 'Casual Blouse', 53)
+#3 /var/www/html/wp-admin/includes/template.php(1924): get_the_title(Object(WP_Post))
+#4 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(925): _draft_or_post_title()
+#5 /var/www/html/wp-admin/includes/class-wp-list-table.php(1344): WP_Posts_List_Table->column_cb(Object(WP_Post))
+#6 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(1298): WP_List_Table->single_row_columns(Object(WP_Post))
+#7 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(741): WP_Posts_List_Table->single_row(Object(WP_Post), 0)
+#8 /var/www/html/wp-admin/includes/class-wp-pos in /var/www/html/wp-content/themes/a-one/functions.php on line 5
+
+2020-06-17T16:27:47+00:00 CRITICAL Uncaught Error: Call to a member function get_cart() on null in /var/www/html/wp-content/themes/a-one/functions.php:5
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(287): hpp_tooltip_woocommerce_product_title('Cart', 8)
+#1 /var/www/html/wp-includes/plugin.php(206): WP_Hook->apply_filters('Cart', Array)
+#2 /var/www/html/wp-includes/post-template.php(171): apply_filters('the_title', 'Cart', 8)
+#3 /var/www/html/wp-admin/includes/template.php(1924): get_the_title(Object(WP_Post))
+#4 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(925): _draft_or_post_title()
+#5 /var/www/html/wp-admin/includes/class-wp-list-table.php(1344): WP_Posts_List_Table->column_cb(Object(WP_Post))
+#6 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(1298): WP_List_Table->single_row_columns(Object(WP_Post))
+#7 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(843): WP_Posts_List_Table->single_row(Object(WP_Post), 0)
+#8 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(716): WP_Po in /var/www/html/wp-content/themes/a-one/functions.php on line 5
+
+2020-06-17T16:27:55+00:00 CRITICAL Uncaught Error: Call to a member function get_cart() on null in /var/www/html/wp-content/themes/a-one/functions.php:5
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(287): hpp_tooltip_woocommerce_product_title('Cart', 8)
+#1 /var/www/html/wp-includes/plugin.php(206): WP_Hook->apply_filters('Cart', Array)
+#2 /var/www/html/wp-includes/post-template.php(171): apply_filters('the_title', 'Cart', 8)
+#3 /var/www/html/wp-admin/includes/template.php(1924): get_the_title(Object(WP_Post))
+#4 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(925): _draft_or_post_title()
+#5 /var/www/html/wp-admin/includes/class-wp-list-table.php(1344): WP_Posts_List_Table->column_cb(Object(WP_Post))
+#6 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(1298): WP_List_Table->single_row_columns(Object(WP_Post))
+#7 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(843): WP_Posts_List_Table->single_row(Object(WP_Post), 0)
+#8 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(716): WP_Po in /var/www/html/wp-content/themes/a-one/functions.php on line 5
+
+2020-06-17T16:28:20+00:00 CRITICAL Uncaught Error: Call to a member function get_cart() on null in /var/www/html/wp-content/themes/a-one/functions.php:5
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(287): hpp_tooltip_woocommerce_product_title('Hello world!', 1)
+#1 /var/www/html/wp-includes/plugin.php(206): WP_Hook->apply_filters('Hello world!', Array)
+#2 /var/www/html/wp-includes/post-template.php(171): apply_filters('the_title', 'Hello world!', 1)
+#3 /var/www/html/wp-admin/includes/template.php(1924): get_the_title(Object(WP_Post))
+#4 /var/www/html/wp-admin/includes/dashboard.php(970): _draft_or_post_title()
+#5 /var/www/html/wp-admin/includes/dashboard.php(885): wp_dashboard_recent_posts(Array)
+#6 /var/www/html/wp-admin/includes/template.php(1345): wp_dashboard_site_activity('', Array)
+#7 /var/www/html/wp-admin/includes/dashboard.php(246): do_meta_boxes(Object(WP_Screen), 'normal', '')
+#8 /var/www/html/wp-admin/index.php(148): wp_dashboard()
+#9 {main}
+  thrown in /var/www/html/wp-content/themes/a-one/functions.php on line 5
+
+2020-06-17T16:28:26+00:00 CRITICAL Uncaught Error: Call to a member function get_cart() on null in /var/www/html/wp-content/themes/a-one/functions.php:5
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(287): hpp_tooltip_woocommerce_product_title('Cart', 8)
+#1 /var/www/html/wp-includes/plugin.php(206): WP_Hook->apply_filters('Cart', Array)
+#2 /var/www/html/wp-includes/post-template.php(171): apply_filters('the_title', 'Cart', 8)
+#3 /var/www/html/wp-admin/includes/template.php(1924): get_the_title(Object(WP_Post))
+#4 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(925): _draft_or_post_title()
+#5 /var/www/html/wp-admin/includes/class-wp-list-table.php(1344): WP_Posts_List_Table->column_cb(Object(WP_Post))
+#6 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(1298): WP_List_Table->single_row_columns(Object(WP_Post))
+#7 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(843): WP_Posts_List_Table->single_row(Object(WP_Post), 0)
+#8 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(716): WP_Po in /var/www/html/wp-content/themes/a-one/functions.php on line 5
+
+2020-06-17T16:29:17+00:00 CRITICAL Uncaught Error: Call to a member function get_cart() on null in /var/www/html/wp-content/themes/a-one/functions.php:5
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(287): hpp_tooltip_woocommerce_product_title('Cart', 8)
+#1 /var/www/html/wp-includes/plugin.php(206): WP_Hook->apply_filters('Cart', Array)
+#2 /var/www/html/wp-includes/post-template.php(171): apply_filters('the_title', 'Cart', 8)
+#3 /var/www/html/wp-admin/includes/template.php(1924): get_the_title(Object(WP_Post))
+#4 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(925): _draft_or_post_title()
+#5 /var/www/html/wp-admin/includes/class-wp-list-table.php(1344): WP_Posts_List_Table->column_cb(Object(WP_Post))
+#6 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(1298): WP_List_Table->single_row_columns(Object(WP_Post))
+#7 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(843): WP_Posts_List_Table->single_row(Object(WP_Post), 0)
+#8 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(716): WP_Po in /var/www/html/wp-content/themes/a-one/functions.php on line 5
+
+2020-06-17T16:31:21+00:00 CRITICAL Uncaught Error: Call to a member function get_cart() on null in /var/www/html/wp-content/themes/a-one/functions.php:5
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(287): hpp_tooltip_woocommerce_product_title('Cart', 8)
+#1 /var/www/html/wp-includes/plugin.php(206): WP_Hook->apply_filters('Cart', Array)
+#2 /var/www/html/wp-includes/post-template.php(171): apply_filters('the_title', 'Cart', 8)
+#3 /var/www/html/wp-admin/includes/template.php(1924): get_the_title(Object(WP_Post))
+#4 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(925): _draft_or_post_title()
+#5 /var/www/html/wp-admin/includes/class-wp-list-table.php(1344): WP_Posts_List_Table->column_cb(Object(WP_Post))
+#6 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(1298): WP_List_Table->single_row_columns(Object(WP_Post))
+#7 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(843): WP_Posts_List_Table->single_row(Object(WP_Post), 0)
+#8 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(716): WP_Po in /var/www/html/wp-content/themes/a-one/functions.php on line 5
+
+2020-06-17T16:32:30+00:00 CRITICAL Uncaught Error: Call to a member function get_cart() on null in /var/www/html/wp-content/themes/a-one/functions.php:5
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(287): hpp_tooltip_woocommerce_product_title('Cart', 8)
+#1 /var/www/html/wp-includes/plugin.php(206): WP_Hook->apply_filters('Cart', Array)
+#2 /var/www/html/wp-includes/post-template.php(171): apply_filters('the_title', 'Cart', 8)
+#3 /var/www/html/wp-admin/includes/template.php(1924): get_the_title(Object(WP_Post))
+#4 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(925): _draft_or_post_title()
+#5 /var/www/html/wp-admin/includes/class-wp-list-table.php(1344): WP_Posts_List_Table->column_cb(Object(WP_Post))
+#6 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(1298): WP_List_Table->single_row_columns(Object(WP_Post))
+#7 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(843): WP_Posts_List_Table->single_row(Object(WP_Post), 0)
+#8 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(716): WP_Po in /var/www/html/wp-content/themes/a-one/functions.php on line 5
+
+2020-06-17T16:32:57+00:00 CRITICAL Uncaught Error: Call to a member function get_cart() on null in /var/www/html/wp-content/themes/a-one/functions.php:5
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(287): hpp_tooltip_woocommerce_product_title('Cart', 8)
+#1 /var/www/html/wp-includes/plugin.php(206): WP_Hook->apply_filters('Cart', Array)
+#2 /var/www/html/wp-includes/post-template.php(171): apply_filters('the_title', 'Cart', 8)
+#3 /var/www/html/wp-admin/includes/template.php(1924): get_the_title(Object(WP_Post))
+#4 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(925): _draft_or_post_title()
+#5 /var/www/html/wp-admin/includes/class-wp-list-table.php(1344): WP_Posts_List_Table->column_cb(Object(WP_Post))
+#6 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(1298): WP_List_Table->single_row_columns(Object(WP_Post))
+#7 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(843): WP_Posts_List_Table->single_row(Object(WP_Post), 0)
+#8 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(716): WP_Po in /var/www/html/wp-content/themes/a-one/functions.php on line 5
+
+2020-06-17T16:34:59+00:00 CRITICAL Uncaught Error: Call to a member function get_cart() on null in /var/www/html/wp-content/themes/a-one/functions.php:5
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(287): hpp_tooltip_woocommerce_product_title('Casual Blouse', 53)
+#1 /var/www/html/wp-includes/plugin.php(206): WP_Hook->apply_filters('Casual Blouse', Array)
+#2 /var/www/html/wp-includes/post-template.php(171): apply_filters('the_title', 'Casual Blouse', 53)
+#3 /var/www/html/wp-admin/includes/template.php(1924): get_the_title(Object(WP_Post))
+#4 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(925): _draft_or_post_title()
+#5 /var/www/html/wp-admin/includes/class-wp-list-table.php(1344): WP_Posts_List_Table->column_cb(Object(WP_Post))
+#6 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(1298): WP_List_Table->single_row_columns(Object(WP_Post))
+#7 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(741): WP_Posts_List_Table->single_row(Object(WP_Post), 0)
+#8 /var/www/html/wp-admin/includes/class-wp-pos in /var/www/html/wp-content/themes/a-one/functions.php on line 5
+
+2020-06-17T16:35:01+00:00 CRITICAL Uncaught Error: Call to a member function get_cart() on null in /var/www/html/wp-content/themes/a-one/functions.php:5
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(287): hpp_tooltip_woocommerce_product_title('Casual Blouse', 53)
+#1 /var/www/html/wp-includes/plugin.php(206): WP_Hook->apply_filters('Casual Blouse', Array)
+#2 /var/www/html/wp-includes/post-template.php(171): apply_filters('the_title', 'Casual Blouse', 53)
+#3 /var/www/html/wp-admin/includes/template.php(1924): get_the_title(Object(WP_Post))
+#4 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(925): _draft_or_post_title()
+#5 /var/www/html/wp-admin/includes/class-wp-list-table.php(1344): WP_Posts_List_Table->column_cb(Object(WP_Post))
+#6 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(1298): WP_List_Table->single_row_columns(Object(WP_Post))
+#7 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(741): WP_Posts_List_Table->single_row(Object(WP_Post), 0)
+#8 /var/www/html/wp-admin/includes/class-wp-pos in /var/www/html/wp-content/themes/a-one/functions.php on line 5
+
+2020-06-17T16:35:02+00:00 CRITICAL Uncaught Error: Call to a member function get_cart() on null in /var/www/html/wp-content/themes/a-one/functions.php:5
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(287): hpp_tooltip_woocommerce_product_title('Casual Blouse', 53)
+#1 /var/www/html/wp-includes/plugin.php(206): WP_Hook->apply_filters('Casual Blouse', Array)
+#2 /var/www/html/wp-includes/post-template.php(171): apply_filters('the_title', 'Casual Blouse', 53)
+#3 /var/www/html/wp-admin/includes/template.php(1924): get_the_title(Object(WP_Post))
+#4 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(925): _draft_or_post_title()
+#5 /var/www/html/wp-admin/includes/class-wp-list-table.php(1344): WP_Posts_List_Table->column_cb(Object(WP_Post))
+#6 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(1298): WP_List_Table->single_row_columns(Object(WP_Post))
+#7 /var/www/html/wp-admin/includes/class-wp-posts-list-table.php(741): WP_Posts_List_Table->single_row(Object(WP_Post), 0)
+#8 /var/www/html/wp-admin/includes/class-wp-pos in /var/www/html/wp-content/themes/a-one/functions.php on line 5
+
+2020-06-17T16:37:53+00:00 CRITICAL Uncaught Error: Call to a member function get_cart() on null in /var/www/html/wp-content/themes/a-one/functions.php:5
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(287): hpp_tooltip_woocommerce_product_title('Hello world!', 1)
+#1 /var/www/html/wp-includes/plugin.php(206): WP_Hook->apply_filters('Hello world!', Array)
+#2 /var/www/html/wp-includes/post-template.php(171): apply_filters('the_title', 'Hello world!', 1)
+#3 /var/www/html/wp-admin/includes/template.php(1924): get_the_title(Object(WP_Post))
+#4 /var/www/html/wp-admin/includes/dashboard.php(970): _draft_or_post_title()
+#5 /var/www/html/wp-admin/includes/dashboard.php(885): wp_dashboard_recent_posts(Array)
+#6 /var/www/html/wp-admin/includes/template.php(1345): wp_dashboard_site_activity('', Array)
+#7 /var/www/html/wp-admin/includes/dashboard.php(246): do_meta_boxes(Object(WP_Screen), 'normal', '')
+#8 /var/www/html/wp-admin/index.php(148): wp_dashboard()
+#9 {main}
+  thrown in /var/www/html/wp-content/themes/a-one/functions.php on line 5
+
+2020-06-17T18:09:23+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:09:44+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:09:44+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:09:47+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:11:20+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:11:45+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:11:45+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:11:46+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:12:46+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:13:20+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:13:46+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:13:46+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:13:47+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:14:46+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:14:48+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:15:29+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:15:47+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:15:47+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:16:17+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:16:48+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:17:22+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:17:48+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:17:49+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:18:02+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:18:17+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:18:50+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:19:49+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:19:52+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:20:18+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:20:52+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:21:20+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:21:50+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:21:52+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:22:18+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
+2020-06-17T18:22:20+00:00 CRITICAL Uncaught Error: Call to a member function execute() on null in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php:283
+Stack trace:
+#0 /var/www/html/wp-content/themes/porto/inc/admin/admin.php(268): porto_compile_css('bootstrap_rtl')
+#1 /var/www/html/wp-includes/class-wp-hook.php(287): porto_compile_css_on_activation('')
+#2 /var/www/html/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#4 /var/www/html/wp-admin/admin-ajax.php(45): do_action('admin_init')
+#5 {main}
+  thrown in /var/www/html/wp-content/themes/porto/inc/admin/theme_options/save_settings.php on line 283
+
