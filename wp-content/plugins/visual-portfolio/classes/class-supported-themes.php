@@ -39,16 +39,22 @@ class Visual_Portfolio_Supported_Themes {
                     'url'  => visual_portfolio()->plugin_url . 'assets/css/theme-twentynineteen.min.css',
                 );
                 break;
+            case 'twentyseventeen':
+                $result = array(
+                    'name' => 'vpf-twentyseventeen',
+                    'url'  => visual_portfolio()->plugin_url . 'assets/css/theme-twentyseventeen.min.css',
+                );
+                break;
             case 'twentysixteen':
                 $result = array(
                     'name' => 'vpf-twentysixteen',
                     'url'  => visual_portfolio()->plugin_url . 'assets/css/theme-twentysixteen.min.css',
                 );
                 break;
-            case 'twentyseventeen':
+            case 'twentyfifteen':
                 $result = array(
-                    'name' => 'vpf-twentyseventeen',
-                    'url'  => visual_portfolio()->plugin_url . 'assets/css/theme-twentyseventeen.min.css',
+                    'name' => 'vpf-twentyfifteen',
+                    'url'  => visual_portfolio()->plugin_url . 'assets/css/theme-twentyfifteen.min.css',
                 );
                 break;
         }
@@ -62,7 +68,7 @@ class Visual_Portfolio_Supported_Themes {
     public function wp_enqueue_scripts() {
         $theme_compat = $this->get_theme_compatibility_style();
         if ( $theme_compat ) {
-            wp_enqueue_style( $theme_compat['name'], $theme_compat['url'], array(), '1.16.2' );
+            wp_enqueue_style( $theme_compat['name'], $theme_compat['url'], array(), '2.0.1' );
         }
     }
 }

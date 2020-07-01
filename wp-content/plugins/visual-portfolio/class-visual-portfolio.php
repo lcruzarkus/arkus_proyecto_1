@@ -2,7 +2,7 @@
 /**
  * Plugin Name:  Visual Portfolio
  * Description:  Portfolio post type with visual editor
- * Version:      1.16.2
+ * Version:      2.0.1
  * Author:       nK
  * Author URI:   https://nkdev.info
  * License:      GPLv2 or later
@@ -34,8 +34,7 @@ class Visual_Portfolio {
     public static function instance() {
         if ( is_null( self::$instance ) ) {
             self::$instance = new self();
-            self::$instance->init_options();
-            self::$instance->init_hooks();
+            self::$instance->init();
         }
         return self::$instance;
     }
@@ -55,32 +54,18 @@ class Visual_Portfolio {
     public $plugin_url;
 
     /**
-     * Plugin name
+     * Path to the pro plugin directory
      *
-     * @var $plugin_name
+     * @var $plugin_path
      */
-    public $plugin_name;
+    public $pro_plugin_path;
 
     /**
-     * Plugin version
+     * URL to the pro plugin directory
      *
-     * @var $plugin_version
+     * @var $plugin_url
      */
-    public $plugin_version;
-
-    /**
-     * Plugin slug
-     *
-     * @var $plugin_slug
-     */
-    public $plugin_slug;
-
-    /**
-     * Plugin name sanitized
-     *
-     * @var $plugin_name_sanitized
-     */
-    public $plugin_name_sanitized;
+    public $pro_plugin_url;
 
     /**
      * Visual_Portfolio constructor.
@@ -92,9 +77,14 @@ class Visual_Portfolio {
     /**
      * Init options
      */
-    public function init_options() {
+    public function init() {
         $this->plugin_path = plugin_dir_path( __FILE__ );
         $this->plugin_url  = plugin_dir_url( __FILE__ );
+
+        if ( in_array( 'visual-portfolio-pro/class-visual-portfolio-pro.php', (array) get_option( 'active_plugins', array() ), true ) ) {
+            $this->pro_plugin_path = plugin_dir_path( WP_PLUGIN_DIR . '/visual-portfolio-pro/class-visual-portfolio-pro.php' );
+            $this->pro_plugin_url  = plugin_dir_url( WP_PLUGIN_DIR . '/visual-portfolio-pro/class-visual-portfolio-pro.php' );
+        }
 
         // load textdomain.
         load_plugin_textdomain( 'visual-portfolio', false, basename( dirname( __FILE__ ) ) . '/languages' );
@@ -118,13 +108,6 @@ class Visual_Portfolio {
     }
 
     /**
-     * Init hooks
-     */
-    public function init_hooks() {
-        add_action( 'admin_init', array( $this, 'admin_init' ) );
-    }
-
-    /**
      * Activation Hook
      */
     public function activation_hook() {
@@ -139,37 +122,25 @@ class Visual_Portfolio {
     }
 
     /**
-     * Init variables
-     */
-    public function admin_init() {
-        // get current plugin data.
-        $data                        = get_plugin_data( __FILE__ );
-        $this->plugin_name           = $data['Name'];
-        $this->plugin_version        = $data['Version'];
-        $this->plugin_slug           = plugin_basename( __FILE__, '.php' );
-        $this->plugin_name_sanitized = basename( __FILE__, '.php' );
-    }
-
-    /**
      * Add image sizes.
      */
     public function add_image_sizes() {
-        $sm       = Visual_Portfolio_Settings::get_option( 'sm', 'vp_images', false ) ? Visual_Portfolio_Settings::get_option( 'sm', 'vp_images', false ) : 500;
-        $md       = Visual_Portfolio_Settings::get_option( 'md', 'vp_images', false ) ? Visual_Portfolio_Settings::get_option( 'md', 'vp_images', false ) : 800;
-        $lg       = Visual_Portfolio_Settings::get_option( 'lg', 'vp_images', false ) ? Visual_Portfolio_Settings::get_option( 'lg', 'vp_images', false ) : 1280;
-        $xl       = Visual_Portfolio_Settings::get_option( 'xl', 'vp_images', false ) ? Visual_Portfolio_Settings::get_option( 'xl', 'vp_images', false ) : 1920;
-        $sm_popup = Visual_Portfolio_Settings::get_option( 'sm_popup', 'vp_images', false ) ? Visual_Portfolio_Settings::get_option( 'sm_popup', 'vp_images', false ) : 500;
-        $md_popup = Visual_Portfolio_Settings::get_option( 'md_popup', 'vp_images', false ) ? Visual_Portfolio_Settings::get_option( 'md_popup', 'vp_images', false ) : 800;
-        $xl_popup = Visual_Portfolio_Settings::get_option( 'xl_popup', 'vp_images', false ) ? Visual_Portfolio_Settings::get_option( 'xl_popup', 'vp_images', false ) : 1920;
+        $sm       = Visual_Portfolio_Settings::get_option( 'sm', 'vp_images' );
+        $md       = Visual_Portfolio_Settings::get_option( 'md', 'vp_images' );
+        $lg       = Visual_Portfolio_Settings::get_option( 'lg', 'vp_images' );
+        $xl       = Visual_Portfolio_Settings::get_option( 'xl', 'vp_images' );
+        $sm_popup = Visual_Portfolio_Settings::get_option( 'sm_popup', 'vp_images' );
+        $md_popup = Visual_Portfolio_Settings::get_option( 'md_popup', 'vp_images' );
+        $xl_popup = Visual_Portfolio_Settings::get_option( 'xl_popup', 'vp_images' );
 
         // custom image sizes.
-        add_image_size( 'vp_sm', $sm, $sm );
-        add_image_size( 'vp_md', $md, $md );
-        add_image_size( 'vp_lg', $lg, $lg );
-        add_image_size( 'vp_xl', $xl, $xl );
-        add_image_size( 'vp_sm_popup', $sm_popup, $sm_popup );
-        add_image_size( 'vp_md_popup', $md_popup, $md_popup );
-        add_image_size( 'vp_xl_popup', $xl_popup, $xl_popup );
+        add_image_size( 'vp_sm', $sm, 9999 );
+        add_image_size( 'vp_md', $md, 9999 );
+        add_image_size( 'vp_lg', $lg, 9999 );
+        add_image_size( 'vp_xl', $xl, 9999 );
+        add_image_size( 'vp_sm_popup', $sm_popup, 9999 );
+        add_image_size( 'vp_md_popup', $md_popup, 9999 );
+        add_image_size( 'vp_xl_popup', $xl_popup, 9999 );
 
         add_filter( 'image_size_names_choose', array( $this, 'image_size_names_choose' ) );
     }
@@ -197,14 +168,22 @@ class Visual_Portfolio {
      * Include dependencies
      */
     private function include_dependencies() {
+        require_once $this->plugin_path . 'gutenberg/utils/control-condition-check/index.php';
+        require_once $this->plugin_path . 'gutenberg/utils/control-get-value/index.php';
+        require_once $this->plugin_path . 'gutenberg/utils/controls-dynamic-css/index.php';
+        require_once $this->plugin_path . 'classes/class-parse-blocks.php';
         require_once $this->plugin_path . 'classes/class-assets.php';
         require_once $this->plugin_path . 'classes/class-extend.php';
         require_once $this->plugin_path . 'classes/class-images.php';
         require_once $this->plugin_path . 'classes/class-settings.php';
         require_once $this->plugin_path . 'classes/class-rest.php';
         require_once $this->plugin_path . 'classes/class-get-portfolio.php';
+        require_once $this->plugin_path . 'classes/class-gutenberg.php';
+        require_once $this->plugin_path . 'classes/class-gutenberg-saved.php';
         require_once $this->plugin_path . 'classes/class-shortcode.php';
         require_once $this->plugin_path . 'classes/class-preview.php';
+        require_once $this->plugin_path . 'classes/class-custom-post-type.php';
+        require_once $this->plugin_path . 'classes/class-custom-post-meta.php';
         require_once $this->plugin_path . 'classes/class-admin.php';
         require_once $this->plugin_path . 'classes/class-controls.php';
         require_once $this->plugin_path . 'classes/class-tinymce.php';
@@ -228,6 +207,11 @@ class Visual_Portfolio {
 
         // template in theme folder.
         $template = locate_template( array( '/visual-portfolio/' . $template_name . '.php' ) );
+
+        // pro plugin template.
+        if ( ! $template && $this->pro_plugin_path && file_exists( $this->pro_plugin_path . 'templates/' . $template_name . '.php' ) ) {
+            $template = $this->pro_plugin_path . 'templates/' . $template_name . '.php';
+        }
 
         // default template.
         if ( ! $template ) {
@@ -257,6 +241,9 @@ class Visual_Portfolio {
         } elseif ( file_exists( get_template_directory() . '/visual-portfolio/' . $template_name . '.css' ) ) {
             // Parent Theme (when parent exists).
             $template = trailingslashit( get_template_directory_uri() ) . 'visual-portfolio/' . $template_name . '.css';
+        } elseif ( $this->pro_plugin_path && file_exists( $this->pro_plugin_path . 'templates/' . $template_name . '.css' ) ) {
+            // PRO plugin folder.
+            $template = $this->pro_plugin_url . 'templates/' . $template_name . '.css';
         } elseif ( file_exists( $this->plugin_path . 'templates/' . $template_name . '.css' ) ) {
             // Default file in plugin folder.
             $template = $this->plugin_url . 'templates/' . $template_name . '.css';
@@ -341,7 +328,7 @@ class Visual_Portfolio {
             }
 
             // Convert url to hostname, eg: "youtube" instead of "https://youtube.com/".
-            $data['provider-name'] = pathinfo( str_replace( array( 'www.' ), '', parse_url( $url, PHP_URL_HOST ) ), PATHINFO_FILENAME );
+            $data['provider-name'] = pathinfo( str_replace( array( 'www.' ), '', wp_parse_url( $url, PHP_URL_HOST ) ), PATHINFO_FILENAME );
 
             // save cache.
             set_transient( $cache_name, $data, DAY_IN_SECONDS );

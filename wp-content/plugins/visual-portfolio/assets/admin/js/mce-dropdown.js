@@ -1,13 +1,13 @@
 /*!
  * Name    : Visual Portfolio
- * Version : 1.16.2
+ * Version : 2.0.1
  * Author  : nK https://nkdev.info
  */
 const {
     tinymce,
     VPTinyMCEOptions,
 } = window;
-if ( typeof VPTinyMCEOptions !== 'undefined' && VPTinyMCEOptions.length ) {
+if ( 'undefined' !== typeof VPTinyMCEOptions && VPTinyMCEOptions.length ) {
     const options = [ {
         text: '',
         value: '',

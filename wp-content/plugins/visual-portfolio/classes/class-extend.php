@@ -30,7 +30,7 @@ class Visual_Portfolio_Extend {
          * Example:
             array(
                 'new_layout' => array(
-                    'title' => esc_html__( 'New Layout', 'text_domain' ),
+                    'title'    => esc_html__( 'New Layout', 'text_domain' ),
                     'controls' => array(
                         ... controls ...
                     ),
@@ -69,11 +69,9 @@ class Visual_Portfolio_Extend {
          * Example:
             array(
                 array(
-                    'url' => 'assets/images/tiles-1-1.svg',
                     'value' => '1|1,0.5|',
                 ),
                 array(
-                    'url' => 'assets/images/tiles-2-1.svg',
                     'value' => '2|1,1|',
                 ),
             )
@@ -92,16 +90,21 @@ class Visual_Portfolio_Extend {
          * Example:
             array(
                 'new_items_style' => array(
-                    'title' => esc_html__( 'New Items Style', 'visual-portfolio' ),
+                    'title'            => esc_html__( 'New Items Style', 'visual-portfolio' ),
                     'builtin_controls' => array(
-                        'show_title' => true,
-                        'show_categories' => true,
-                        'show_date' => true,
-                        'show_excerpt' => true,
-                        'show_icons' => false,
-                        'align' => true,
+                        'images_rounded_corners' => true,
+                        'show_title'             => true,
+                        'show_categories'        => true,
+                        'show_date'              => true,
+                        'show_author'            => true,
+                        'show_comments_count'    => true,
+                        'show_views_count'       => true,
+                        'show_reading_time'      => true,
+                        'show_excerpt'           => true,
+                        'show_icons'             => false,
+                        'align'                  => true,
                     ),
-                    'controls' => array(
+                    'controls'         => array(
                         ... controls ...
                     ),
                 ),
@@ -139,7 +142,7 @@ class Visual_Portfolio_Extend {
          * Example:
             array(
                 'new_filter' => array(
-                    'title' => esc_html__( 'New Filter', 'visual-portfolio' ),
+                    'title'    => esc_html__( 'New Filter', 'visual-portfolio' ),
                     'controls' => array(
                         ... controls ...
                     ),
@@ -178,7 +181,7 @@ class Visual_Portfolio_Extend {
          * Example:
             array(
                 'new_sort' => array(
-                    'title' => esc_html__( 'New Sort', 'visual-portfolio' ),
+                    'title'    => esc_html__( 'New Sort', 'visual-portfolio' ),
                     'controls' => array(
                         ... controls ...
                     ),
@@ -217,7 +220,7 @@ class Visual_Portfolio_Extend {
          * Example:
             array(
                 'new_pagination' => array(
-                    'title' => esc_html__( 'New Pagination', 'visual-portfolio' ),
+                    'title'    => esc_html__( 'New Pagination', 'visual-portfolio' ),
                     'controls' => array(
                         ... controls ...
                     ),
@@ -289,16 +292,25 @@ class Visual_Portfolio_Extend {
                 'title' => array(
                     'type'  => 'text',
                     'label' => esc_html__( 'Title', 'visual-portfolio' ),
-                    'name'  => $name . '_additional_title',
                 ),
                 'description' => array(
                     'type'  => 'textarea',
                     'label' => esc_html__( 'Description', 'visual-portfolio' ),
-                    'name'  => $name . '_additional_description',
                 ),
             )
          */
         return apply_filters( 'vpf_extend_image_controls', $controls, $name );
+    }
+
+    /**
+     * Extend Options before Query Args.
+     *
+     * @param string $options - portfolio options.
+     * @param string $id - portfolio id.
+     * @return array
+     */
+    public static function options_before_query_args( $options, $id ) {
+        return apply_filters( 'vpf_extend_options_before_query_args', $options, $id );
     }
 
     /**
@@ -327,7 +339,7 @@ class Visual_Portfolio_Extend {
             array(
                 array(
                     'filter'      => '*',
-                    'label'       => $options['vp_filter_text_all'],
+                    'label'       => $options['filter_text_all'],
                     'description' => false,
                     'count'       => false,
                     'active'      => true,

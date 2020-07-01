@@ -20,13 +20,13 @@ class Visual_Portfolio_Settings {
      *
      * @var object
      */
-    public $settings_api;
+    public static $settings_api;
 
     /**
      * Visual_Portfolio_Settings constructor.
      */
     public function __construct() {
-        $this->init_actions();
+        self::init_actions();
     }
 
     /**
@@ -34,28 +34,40 @@ class Visual_Portfolio_Settings {
      *
      * @param string $option - option name.
      * @param string $section - section name.
-     * @param string $default - default option value.
+     * @param string $deprecated_default - default option value.
      *
      * @return bool|string
      */
-    public static function get_option( $option, $section, $default = '' ) {
+    public static function get_option( $option, $section, $deprecated_default = '' ) {
         $options = get_option( $section );
+        $result  = '';
 
         if ( isset( $options[ $option ] ) ) {
-            return 'off' === $options[ $option ] ? false : ( 'on' === $options[ $option ] ? true : $options[ $option ] );
+            $result = $options[ $option ];
+        } else {
+            // find default.
+            $fields = self::get_settings_fields();
+
+            if ( isset( $fields[ $section ] ) && is_array( $fields[ $section ] ) ) {
+                foreach ( $fields[ $section ] as $field_data ) {
+                    if ( $option === $field_data['name'] && isset( $field_data['default'] ) ) {
+                        $result = $field_data['default'];
+                    }
+                }
+            }
         }
 
-        return $default;
+        return 'off' === $result ? false : ( 'on' === $result ? true : $result );
     }
 
     /**
      * Init actions
      */
-    public function init_actions() {
-        $this->settings_api = new Visual_Portfolio_Settings_API();
+    public static function init_actions() {
+        self::$settings_api = new Visual_Portfolio_Settings_API();
 
-        add_action( 'admin_init', array( $this, 'admin_init' ) );
-        add_action( 'admin_menu', array( $this, 'admin_menu' ), 11 );
+        add_action( 'admin_init', array( __CLASS__, 'admin_init' ) );
+        add_action( 'admin_menu', array( __CLASS__, 'admin_menu' ), 11 );
     }
 
     /**
@@ -63,13 +75,13 @@ class Visual_Portfolio_Settings {
      *
      * @return void
      */
-    public function admin_init() {
+    public static function admin_init() {
         // set the settings.
-        $this->settings_api->set_sections( $this->get_settings_sections() );
-        $this->settings_api->set_fields( $this->get_settings_fields() );
+        self::$settings_api->set_sections( self::get_settings_sections() );
+        self::$settings_api->set_fields( self::get_settings_fields() );
 
         // initialize settings.
-        $this->settings_api->admin_init();
+        self::$settings_api->admin_init();
     }
 
     /**
@@ -77,14 +89,14 @@ class Visual_Portfolio_Settings {
      *
      * @return void
      */
-    public function admin_menu() {
+    public static function admin_menu() {
         add_submenu_page(
             'edit.php?post_type=portfolio',
             esc_html__( 'Settings', 'visual-portfolio' ),
             esc_html__( 'Settings', 'visual-portfolio' ),
             'manage_options',
             'visual-portfolio-settings',
-            array( $this, 'print_settings_page' )
+            array( __CLASS__, 'print_settings_page' )
         );
     }
 
@@ -93,7 +105,7 @@ class Visual_Portfolio_Settings {
      *
      * @return array
      */
-    public function get_settings_sections() {
+    public static function get_settings_sections() {
         $sections = array(
             array(
                 'id'    => 'vp_general',
@@ -117,7 +129,7 @@ class Visual_Portfolio_Settings {
      *
      * @return array settings fields
      */
-    public function get_settings_fields() {
+    public static function get_settings_fields() {
         $settings_fields = array(
             'vp_general' => array(
                 array(
@@ -143,16 +155,33 @@ class Visual_Portfolio_Settings {
                         'button_label' => esc_html__( 'Choose image', 'visual-portfolio' ),
                     ),
                 ),
+
+                // AJAX Caching and Preloading.
+                array(
+                    'name'    => 'ajax_caching',
+                    'label'   => esc_html__( 'AJAX Caching and Preloading', 'visual-portfolio' ),
+                    'desc'    => esc_html__( 'Reduce AJAX calls request time.', 'visual-portfolio' ),
+                    'type'    => 'checkbox',
+                    'default' => ! class_exists( 'Visual_Portfolio_Pro' ) ? 'off' : 'on',
+                    'is_pro'  => true,
+                ),
             ),
             'vp_images' => array(
                 array(
-                    'name'    => 'images_note',
-                    // translators: %s: regen thumbs url.
-                    'desc'    => sprintf( __( 'After publishing your changes, new image sizes may not be shown until you <a href="%s" target="_blank">Regenerate Thumbnails</a>.', 'visual-portfolio' ), 'https://wordpress.org/plugins/regenerate-thumbnails/' ),
-                    'type'    => 'html',
+                    'name'    => 'lazy_loading',
+                    'label'   => esc_html__( 'Lazy Loading', 'visual-portfolio' ),
+                    'desc'    => esc_html__( 'Enable', 'visual-portfolio' ),
+                    'type'    => 'checkbox',
+                    'default' => 'on',
+                ),
+
+                array(
+                    'name'  => 'images_sizes_title',
+                    'label' => esc_html__( 'Image Sizes', 'visual-portfolio' ),
+                    'type'  => 'html',
                 ),
                 array(
-                    'name'    => 'images_title',
+                    'name'    => 'images_layouts_title',
                     'label'   => esc_html__( 'Layouts', 'visual-portfolio' ),
                     'desc'    => __( 'Image sizes used in portfolio layouts.', 'visual-portfolio' ),
                     'type'    => 'html',
@@ -212,8 +241,15 @@ class Visual_Portfolio_Settings {
                     'placeholder' => '1920',
                     'default'     => 1920,
                 ),
+                array(
+                    'name'    => 'images_sizes_note',
+                    // translators: %s: regenerate thumbnails url.
+                    'desc'    => sprintf( __( 'After publishing your changes, new image sizes may not be shown until you <a href="%s" target="_blank">Regenerate Thumbnails</a>.', 'visual-portfolio' ), 'https://wordpress.org/plugins/regenerate-thumbnails/' ),
+                    'type'    => 'html',
+                ),
             ),
             'vp_popup_gallery' => array(
+                // Vendor.
                 array(
                     'name'    => 'vendor',
                     'label'   => esc_html__( 'Vendor Script', 'visual-portfolio' ),
@@ -223,6 +259,25 @@ class Visual_Portfolio_Settings {
                         'fancybox'   => esc_html__( 'Fancybox', 'visual-portfolio' ),
                     ),
                     'default' => 'photoswipe',
+                ),
+
+                // Default WordPress Images.
+                array(
+                    'name'    => 'enable_on_wordpress_images',
+                    'label'   => esc_html__( 'WordPress Images', 'visual-portfolio' ),
+                    'desc'    => esc_html__( 'Enable popup for WordPress images and galleries.', 'visual-portfolio' ),
+                    'type'    => 'checkbox',
+                    'default' => 'off',
+                ),
+
+                // Deeplinking.
+                array(
+                    'name'    => 'deep_linking',
+                    'label'   => esc_html__( 'Deep Linking', 'visual-portfolio' ),
+                    'desc'    => esc_html__( 'Makes URL automatically change when you open popup and you can easily link to specific popup image.', 'visual-portfolio' ),
+                    'type'    => 'checkbox',
+                    'default' => ! class_exists( 'Visual_Portfolio_Pro' ) ? 'off' : 'on',
+                    'is_pro'  => true,
                 ),
 
                 // General Popup Settings.
@@ -292,6 +347,21 @@ class Visual_Portfolio_Settings {
                     'type'    => 'color',
                     'default' => '#1e1e1e',
                 ),
+
+                // Page iframe popup.
+                array(
+                    'name'    => 'pages_iframe_custom_css',
+                    'label'   => esc_html__( 'Pages iFrame Custom CSS', 'visual-portfolio' ),
+                    'desc'    => esc_html__( 'When you display pages in popup iframe, you may not need some page elements like header and footer. Hide it using custom CSS with classname `.vp-popup-iframe`.', 'visual-portfolio' ),
+                    'type'    => 'textarea',
+                    'default' => ! class_exists( 'Visual_Portfolio_Pro' ) ? '' : '
+.vp-popup-iframe .site-header,
+.vp-popup-iframe #site-footer,
+.vp-popup-iframe #colophon {
+    display: none;
+}',
+                    'is_pro'  => true,
+                ),
             ),
         );
 
@@ -303,12 +373,12 @@ class Visual_Portfolio_Settings {
      *
      * @return void
      */
-    public function print_settings_page() {
+    public static function print_settings_page() {
         echo '<div class="wrap">';
         echo '<h2>' . esc_html__( 'Visual Portfolio Settings', 'visual-portfolio' ) . '</h2>';
 
-        $this->settings_api->show_navigation();
-        $this->settings_api->show_forms();
+        self::$settings_api->show_navigation();
+        self::$settings_api->show_forms();
 
         echo '</div>';
 

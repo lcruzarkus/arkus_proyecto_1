@@ -22,13 +22,6 @@ class Visual_Portfolio_Preview {
     public $preview_enabled = false;
 
     /**
-     * Preview portfolio page id.
-     *
-     * @var int|bool
-     */
-    public $preview_id = false;
-
-    /**
      * Visual_Portfolio_Preview constructor.
      */
     public function __construct() {
@@ -41,7 +34,7 @@ class Visual_Portfolio_Preview {
     public function init_hooks() {
         add_action( 'init', array( $this, 'is_preview_check' ) );
         add_filter( 'pre_handle_404', array( $this, 'pre_handle_404' ) );
-        add_filter( 'vpf_get_layout_option', array( $this, 'filter_preview_option' ), 10, 2 );
+        add_filter( 'vpf_get_options', array( $this, 'filter_preview_option' ) );
         add_action( 'init', array( $this, 'flush_rules_preview_frame' ) );
         add_action( 'template_redirect', array( $this, 'template_redirect' ) );
 
@@ -89,20 +82,19 @@ class Visual_Portfolio_Preview {
      */
     public function is_preview_check() {
         // phpcs:disable
-        $frame = isset( $_GET['vp_preview_frame'] ) ? esc_attr( wp_unslash( $_GET['vp_preview_frame'] ) ) : false;
-        $id    = isset( $_GET['vp_preview_frame_id'] ) ? esc_attr( wp_unslash( $_GET['vp_preview_frame_id'] ) ) : false;
+        $frame = isset( $_POST['vp_preview_frame'] ) ? esc_attr( wp_unslash( $_POST['vp_preview_frame'] ) ) : false;
+        $id    = isset( $_POST['vp_preview_frame_id'] ) ? esc_attr( wp_unslash( $_POST['vp_preview_frame_id'] ) ) : false;
+
+        // Elementor preview.
+        if ( ! $frame && ! $id && isset( $_REQUEST['vp_preview_type'] ) && 'elementor' === $_REQUEST['vp_preview_type'] ) {
+            $frame = isset( $_REQUEST['vp_preview_frame'] ) ? esc_attr( wp_unslash( $_REQUEST['vp_preview_frame'] ) ) : false;
+            $id    = isset( $_REQUEST['vp_preview_frame_id'] ) ? esc_attr( wp_unslash( $_REQUEST['vp_preview_frame_id'] ) ) : false;
+        }
         // phpcs:enable
 
-        $this->preview_enabled = 'true' === $frame && $id;
+        $this->preview_enabled = 'true' === $frame;
+
         if ( $this->preview_enabled ) {
-            // check if the user can view vp_lists page.
-            if ( ! current_user_can( 'read_vp_list', $id ) ) {
-                $this->preview_enabled = false;
-                return;
-            }
-
-            $this->preview_id = $id;
-
             // Tell WP Super Cache & W3 Total Cache to not cache WPReadable requests.
             if ( ! defined( 'DONOTCACHEPAGE' ) ) {
                 // phpcs:ignore
@@ -126,33 +118,18 @@ class Visual_Portfolio_Preview {
     }
 
     /**
-     * Change
+     * Disable infinite loading in preview.
      *
-     * @param mixed  $val - value of the option.
-     * @param string $name - name of the option.
-     * @return mixed
+     * @param array $options - options.
+     *
+     * @return array
      */
-    public function filter_preview_option( $val, $name ) {
-        if ( $this->preview_enabled ) {
-	        // phpcs:disable
-            if ( isset( $_POST[ $name ] ) ) {
-                if ( is_array( $_POST[ $name ] ) ) {
-                    $val = array_map( 'sanitize_text_field', wp_unslash( $_POST[ $name ] ) );
-                } elseif ( 'vp_custom_css' === $name ) {
-                    $val = wp_kses( wp_unslash( $_POST[ $name ] ), array( '\'', '\"' ) );
-                } else {
-                    $val = sanitize_text_field( wp_unslash( $_POST[ $name ] ) );
-                }
-            }
-	        // phpcs:enable
-
-            // disable infinite loading in preview.
-            if ( 'vp_pagination' === $name && 'infinite' === $val ) {
-                $val = 'load-more';
-            }
+    public function filter_preview_option( $options ) {
+        if ( $this->preview_enabled && isset( $options['pagination'] ) && 'infinite' === $options['pagination'] ) {
+            $options['pagination'] = 'load-more';
         }
 
-        return $val;
+        return $options;
     }
 
     /**
@@ -177,29 +154,27 @@ class Visual_Portfolio_Preview {
     /**
      * Display preview frame
      * Available by requesting:
-     * SITE/vp_preview/?vp_preview_frame=true&vp_preview_frame_id=10
+     * SITE/vp_preview/ with POST data: `vp_preview_frame=true&vp_preview_frame_id=10`
      */
     public function template_redirect() {
         if ( $this->preview_enabled ) {
-            $this->print_template( $this->preview_id );
+            $this->print_template();
             exit;
         }
     }
 
     /**
      * Template of preview page.
-     *
-     * @param int $id - visual portfolio shortcode id.
      */
-    public function print_template( $id ) {
+    public function print_template() {
         do_action( 'vpf_preview_template' );
 
         // Hide admin bar.
         add_filter( 'show_admin_bar', '__return_false' );
 
         // Enqueue assets.
-        wp_enqueue_script( 'iframe-resizer-content', visual_portfolio()->plugin_url . 'assets/vendor/iframe-resizer/iframeResizer.contentWindow.min.js', array(), '4.2.1', true );
-        wp_enqueue_script( 'visual-portfolio-preview', visual_portfolio()->plugin_url . 'assets/js/preview.min.js', array( 'jquery' ), '1.16.2', true );
+        wp_enqueue_script( 'iframe-resizer-content', visual_portfolio()->plugin_url . 'assets/vendor/iframe-resizer/iframeResizer.contentWindow.min.js', array(), '4.2.10', true );
+        wp_enqueue_script( 'visual-portfolio-preview', visual_portfolio()->plugin_url . 'assets/js/preview.js', array( 'jquery', 'iframe-resizer-content' ), '2.0.1', true );
 
         // Post data for script.
         wp_localize_script(
@@ -209,6 +184,38 @@ class Visual_Portfolio_Preview {
             isset( $_POST ) && ! empty( $_POST ) ? $_POST : array()
         );
 
+        $class_name = 'vp-preview-wrapper';
+
+        // preview type.
+        // phpcs:ignore
+        $type = isset( $_POST['vp_preview_type'] ) ? esc_attr( wp_unslash( $_POST['vp_preview_type'] ) ) : false;
+
+        if ( $type ) {
+            $class_name .= ' vp-preview-type-' . $type;
+        }
+
+        // Prepare portfolio post options.
+        $options = array();
+
+        // phpcs:disable
+        if ( isset( $_POST ) && ! empty( $_POST ) ) {
+            // phpcs:ignore
+            foreach ( $_POST as $name => $val ) {
+                if ( strpos( $name, 'vp_' ) === 0 ) {
+                    $options[ preg_replace( '/^vp_/', '', $name ) ] = $val;
+                }
+            }
+        }
+
+        // Elementor preview.
+        if ( isset( $_REQUEST['vp_preview_type'] ) && 'elementor' === $_REQUEST['vp_preview_type'] && isset( $_REQUEST['vp_preview_frame_id'] ) ) {
+            $options[ 'id' ] = esc_attr( wp_unslash( $_REQUEST['vp_preview_frame_id'] ) );
+        }
+        // phpcs:enable
+
+        // Register assets.
+        Visual_Portfolio_Assets::enqueue( $options );
+
         // Custom styles.
         visual_portfolio()->include_template_style( 'visual-portfolio-preview', 'preview/style' );
 
@@ -216,7 +223,8 @@ class Visual_Portfolio_Preview {
         visual_portfolio()->include_template(
             'preview/preview',
             array(
-                'id' => $id,
+                'options'    => $options,
+                'class_name' => $class_name,
             )
         );
     }

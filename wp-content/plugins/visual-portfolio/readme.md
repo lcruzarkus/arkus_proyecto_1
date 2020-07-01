@@ -1,19 +1,19 @@
-# Visual Portfolio #
+# Visual Portfolio, Posts & Image Gallery #
 
 * Contributors: nko
 * Tags: portfolio, gallery, image, masonry, popup
-* Requires at least: 4.0.0
-* Tested up to: 5.3
+* Requires at least: 5.4
+* Tested up to: 5.4
 * Requires PHP: 5.5.9
-* Stable tag: 1.16.2
+* Stable tag: 2.0.1
 * License: GPLv2 or later
 * License URI: <http://www.gnu.org/licenses/gpl-2.0.html>
 
-Portfolio layouts visual editor. Masonry, justified, tiles, carousel, slider, coverflow, custom posts, custom image galleries.
+Gutenberg block for your portfolio, posts and image galleries.
 
 ## Description ##
 
-Visual Portfolio let you create beautiful portfolio layouts and image galleries. Generates shortcode to show portfolio or any custom post types using Masonry, Justified, Tiles or Carousel layouts.
+Visual Portfolio let you create beautiful portfolio layouts and image galleries. Visually create and edit Gutenberg block to show portfolio or any custom post types using Masonry, Justified, Tiles, Grid or Carousel layouts.
 
 ### Links ###
 
@@ -23,9 +23,9 @@ Visual Portfolio let you create beautiful portfolio layouts and image galleries.
 
 ## Features ##
 
-* Visual preview for portfolio layouts shortcode builder
+* Visual Gutenberg block editor
 * Templates for theme developers
-* 4 predefined layouts:
+* 5 predefined layouts:
   * Masonry
   * Grid
   * Justified (Flickr)
@@ -33,17 +33,17 @@ Visual Portfolio let you create beautiful portfolio layouts and image galleries.
   * Slider (+ Carousel, Coverflow)
 * 3 predefined hover effects:
   * Fade
+  * Classic
   * Emerge
   * Fly
-  * Default (no hover effect)
 * Infinite Scroll
 * Load More
 * Paged layouts
 * Filtering
 * Sorting
 * Popup gallery (YouTube and Vimeo supported)
+* Popup gallery for default WordPress images and galleries
 * Custom item gutters
-* Stretch option (if you want to break the fixed container of the page)
 * Custom image sets
 * Custom posts type layouts (not only portfolio)
   * Posts by type
@@ -51,8 +51,6 @@ Visual Portfolio let you create beautiful portfolio layouts and image galleries.
   * Posts by taxonomies
   * Custom order
 * Custom CSS for each portfolio layouts
-* Shortcode generated, so you can place unlimited portfolio layouts on the page
-* Gutenberg WordPress builder support
 * Elementor Page Builder support
 * WPBakery Page Builder support
 
@@ -65,20 +63,9 @@ Visual Portfolio let you create beautiful portfolio layouts and image galleries.
 
 ## Screenshots ##
 
-1. Visual Portfolio builder p.1
-2. Visual Portfolio builder p.2 (custom images set)
-3. Visual Portfolio builder p.3 (custom styles)
-4. Portfolio items admin
-5. Visual Portfolio layouts admin
-6. Example: Tiles + Stretch
-7. Example: Justified Gallery (Flickr)
-8. Example: Masonry + Posts
-9. Example: Carousel and Coverflow
-10. Example: Tiles + Custom hover color
-11. Example: Tiles + Paged pagination
-12. Example: Masonry
-13. Example: Tiles + Popup gallery
-14. Example: Popup Gallery
+1. Gutenberg Blocks
+2. Gutenberg Block Settings
+3. Portfolio Items Admin
 
 ## Installation ##
 
@@ -123,6 +110,69 @@ The manual installation method involves downloading our Visual Portfolio plugin 
 [https://visualportfolio.co/documentation/developers/jquery-methods/](https://visualportfolio.co/documentation/developers/jquery-methods/)
 
 ## Changelog ##
+
+! IMPORTANT for v2.0 - this is a major plugin upgrade. A lot of things were changed. We recommend you test it on a staging site first before update it on the production site.
+
+Migration Notes:
+
+* If you extended portfolio options using PHP, you will need to remove `vp_` prefix from your custom options. Example - <https://github.com/nk-o/visual-portfolio/blob/master/src/classes/class-admin.php#L854-L865>
+* If you overwrite templates and styles, you will need to change your styles to work with CSS variables (at least variables for overlay colors) - <https://visualportfolio.co/documentation/developers/css-variables/>
+* If you overwrite templates with meta, you may see no icons displayed. Icons output changed and now it works like this - <https://github.com/nk-o/visual-portfolio/blob/master/src/templates/items-list/items-style/fade/meta.php#L55-L68>
+
+= 2.0.1 =
+
+* fixed removing all images settings when editing gallery images
+* fixed bug, when Saved Layout value `0` or `false` resets to defaults (for example, items gaps)
+* fixed custom CSS escape symbol `>`
+* fixed popup image for the old Gutenberg image block structure
+* fixed setup wizard displaying in Saved Layouts
+* fixed retrieve registered value of Saved Layout
+* force enable Gutenberg editor for Saved Layouts to prevent conflicts with plugins, that uses Classic Editor
+* changed images uploading control (added resorting, removing and adding new images, instead of default WordPress gallery edit tool)
+* changed tiles selector to modal component (better UI)
+* changed "Saved" menu item to "Saved Layouts", as users couldn't find it
+
+= 2.0.0 =
+
+* updated overall UI
+* updated all items styles
+* updated all filters and pagination styles
+* added full-featured Gutenberg block
+* added popup support for default WordPress images and galleries (enable it manually in plugin settings)
+* added new UI component - Layout Elements, where you can change Filter, Sort, Items and Pagination
+* added Minimal styles for Filters, Sort and Pagination
+* added images corner radius option
+* added offset option in Posts Query
+* added more Order By options in Posts Query
+* added Current Query option
+* added new meta data to items: author, comments count, views count, reading time
+* added `rel="noopener noreferrer"` to links with target attribute
+* added transforms from default Gallery and Latest Posts blocks to Visual Portfolio block
+* added Scroll to Top option for Paged pagination
+* added option to hide Load More and Infinite pagination when reached end of lists
+* added new templates for wrappers and slider elements
+* added settings to disable built-in images lazyloading
+* improved lazy loading placeholder animation background styles
+* enabled comments on Portfolio custom post types by default
+* changed all styles to use CSS Variables
+* changed items styles default overlay background color to black
+* changed Layouts editor old interface to Gutenberg
+* changed default Items Style to Fade
+* changed tiles responsive styles from margin to padding (better for developers)
+* changed `sr-only` classname usage to `vp-screen-reader-text`
+* changed registered image sizes height limitation
+* changed all ul elements to div to prevent conflicts with theme styles
+* removed FontAwesome, all icons moved to pure SVG
+* removed align options from Filter, Sort, and Pagination (used layout elements align instead)
+* removed options, that allowed users to change icons classes in layout (all icons moved to templates)
+* fixed titles align in default themes
+* fixed assets loading order in preview
+* fixed z-index CSS variable for Fancybox
+* fixed swiper fade effect slide width
+* moved all SVG icons to separate templates to let developers overwrite it <https://github.com/nk-o/visual-portfolio/tree/master/src/templates/icons>
+* renamed `Portfolio Layouts` to `Saved`
+* renamed `Default` Items Styles, Filter, Sort and Pagination to `Classic`
+* a lot of minor changes
 
 = 1.16.2 =
 

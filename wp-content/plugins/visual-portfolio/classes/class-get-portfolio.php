@@ -61,7 +61,7 @@ class Visual_Portfolio_Get {
     private static $rand_seed_session = false;
 
     /**
-     * Array with already used IDs on the page. Used for option 'Avoid duplicate posts'
+     * Array with already used IDs on the page. Used for option 'Avoid Duplicates'
      *
      * @var array
      */
@@ -84,20 +84,44 @@ class Visual_Portfolio_Get {
     /**
      * Get all available options of post.
      *
-     * @param int|array $options_or_id options for portfolio list to print.
+     * @param array $atts options for portfolio list to print.
      * @return array
      */
-    public static function get_options( $options_or_id = array() ) {
+    public static function get_options( $atts = array() ) {
+        $id       = isset( $atts['id'] ) ? $atts['id'] : false;
+        $block_id = isset( $atts['block_id'] ) ? $atts['block_id'] : false;
+
+        if ( ! $id && ! $block_id ) {
+            return false;
+        }
+
         $result = array();
 
-        // get meta from the post.
-        if ( ! is_array( $options_or_id ) ) {
-            foreach ( Visual_Portfolio_Controls::get_registered_array() as $item ) {
-                $result[ $item['name'] ] = Visual_Portfolio_Controls::get_registered_value( $item['name'], $options_or_id );
+        $registered = Visual_Portfolio_Controls::get_registered_array();
+
+        // Get default or saved layout options.
+        foreach ( $registered as $item ) {
+            if ( isset( $atts[ $item['name'] ] ) ) {
+                $result[ $item['name'] ] = $atts[ $item['name'] ];
+            } else {
+                $result[ $item['name'] ] = Visual_Portfolio_Controls::get_registered_value( $item['name'], $block_id ? false : $id );
             }
-        } else {
-            $result = $options_or_id;
+
+            // fix bool values.
+            if ( 'false' === $result[ $item['name'] ] ) {
+                $result[ $item['name'] ] = false;
+            }
+            if ( 'true' === $result[ $item['name'] ] ) {
+                $result[ $item['name'] ] = true;
+            }
         }
+
+        if ( ! isset( $result['id'] ) ) {
+            $result['id'] = $block_id ? $block_id : $id;
+        }
+
+        // filter.
+        $result = apply_filters( 'vpf_get_options', $result, $atts );
 
         return $result;
     }
@@ -107,8 +131,14 @@ class Visual_Portfolio_Get {
      */
     public static function is_preview() {
         // phpcs:disable
-        $frame = isset( $_GET['vp_preview_frame'] ) ? esc_attr( wp_unslash( $_GET['vp_preview_frame'] ) ) : false;
-        $id = isset( $_GET['vp_preview_frame_id'] ) ? esc_attr( wp_unslash( $_GET['vp_preview_frame_id'] ) ) : false;
+        $frame = isset( $_POST['vp_preview_frame'] ) ? esc_attr( wp_unslash( $_POST['vp_preview_frame'] ) ) : false;
+        $id    = isset( $_POST['vp_preview_frame_id'] ) ? esc_attr( wp_unslash( $_POST['vp_preview_frame_id'] ) ) : false;
+
+        // Elementor preview.
+        if ( ! $frame && ! $id && isset( $_REQUEST['vp_preview_type'] ) && 'elementor' === $_REQUEST['vp_preview_type'] ) {
+            $frame = isset( $_REQUEST['vp_preview_frame'] ) ? esc_attr( wp_unslash( $_REQUEST['vp_preview_frame'] ) ) : false;
+            $id    = isset( $_REQUEST['vp_preview_frame_id'] ) ? esc_attr( wp_unslash( $_REQUEST['vp_preview_frame_id'] ) ) : false;
+        }
         // phpcs:enable
 
         return 'true' === $frame && $id;
@@ -123,7 +153,7 @@ class Visual_Portfolio_Get {
      */
     public static function allow_taxonomies_for_filter( $taxonomy ) {
         // check taxonomies from settings.
-        $custom_taxonomies        = Visual_Portfolio_Settings::get_option( 'filter_taxonomies', 'vp_general', '' );
+        $custom_taxonomies        = Visual_Portfolio_Settings::get_option( 'filter_taxonomies', 'vp_general' );
         $custom_taxonomies        = explode( ',', $custom_taxonomies );
         $custom_taxonomies_result = false;
         if ( $custom_taxonomies && ! empty( $custom_taxonomies ) ) {
@@ -150,26 +180,30 @@ class Visual_Portfolio_Get {
      * @return string
      */
     public static function get( $atts = array() ) {
-        if ( ! is_array( $atts ) || ! isset( $atts['id'] ) ) {
+        if ( ! is_array( $atts ) ) {
             return '';
         }
 
-        do_action( 'vpf_before_get_output' );
+        $options = self::get_options( $atts );
 
-        self::$used_layouts[] = $atts['id'];
+        if ( ! $options ) {
+            return '';
+        }
+
+        do_action( 'vpf_before_get_output', $options );
+
+        self::$used_layouts[] = $options['id'];
 
         // generate unique ID.
-        $uid = ++self::$id;
-        $uid = hash( 'crc32b', $uid . $atts['id'] );
-
-        $options = self::get_options( $atts['id'] );
-        $class   = 'vp-portfolio vp-uid-' . $uid;
+        $uid   = ++self::$id;
+        $uid   = hash( 'crc32b', $uid . $options['id'] );
+        $class = 'vp-portfolio vp-uid-' . $uid;
 
         // Add ID to class.
-        $class .= ' vp-id-' . $atts['id'];
+        $class .= ' vp-id-' . $options['id'];
 
         // Insert styles and scripts.
-        Visual_Portfolio_Assets::enqueue( $options, $atts['id'] );
+        Visual_Portfolio_Assets::enqueue( $options );
 
         // Add custom class.
         if ( isset( $atts['class'] ) ) {
@@ -182,11 +216,11 @@ class Visual_Portfolio_Get {
         }
 
         // stretch class.
-        if ( $options['vp_stretch'] ) {
+        if ( $options['stretch'] ) {
             $class .= ' vp-portfolio__stretch';
         }
 
-        $no_image = Visual_Portfolio_Settings::get_option( 'no_image', 'vp_general', false );
+        $no_image = Visual_Portfolio_Settings::get_option( 'no_image', 'vp_general' );
 
         // prepare image sizes.
         $img_size_popup    = 'vp_xl_popup';
@@ -195,15 +229,15 @@ class Visual_Portfolio_Get {
         $img_size          = 'vp_xl';
         $columns_count     = false;
 
-        switch ( $options['vp_layout'] ) {
+        switch ( $options['layout'] ) {
             case 'masonry':
-                $columns_count = (int) $options['vp_masonry_columns'];
+                $columns_count = (int) $options['masonry_columns'];
                 break;
             case 'grid':
-                $columns_count = (int) $options['vp_grid_columns'];
+                $columns_count = (int) $options['grid_columns'];
                 break;
             case 'tiles':
-                $columns_count = explode( '|', $options['vp_tiles_type'], 1 );
+                $columns_count = explode( '|', $options['tiles_type'], 1 );
                 $columns_count = (int) $columns_count[0];
                 break;
         }
@@ -231,12 +265,12 @@ class Visual_Portfolio_Get {
         // stupid hack as wp_reset_postdata() function is not working for me...
         $old_post = $GLOBALS['post'];
 
-        $is_images = 'images' === $options['vp_content_source'];
+        $is_images = 'images' === $options['content_source'];
 
-        $is_social = 'social-stream' === $options['vp_content_source'];
+        $is_social = 'social-stream' === $options['content_source'];
 
         if ( $is_images || $is_social ) {
-            $query_opts = self::get_query_params( $options, false, $atts['id'] );
+            $query_opts = self::get_query_params( $options, false, $options['id'] );
 
             if ( isset( $query_opts['max_num_pages'] ) ) {
                 $max_pages = (int) ( $query_opts['max_num_pages'] < $start_page ? $start_page : $query_opts['max_num_pages'] );
@@ -245,7 +279,7 @@ class Visual_Portfolio_Get {
             }
         } else {
             // Get query params.
-            $query_opts = self::get_query_params( $options, false, $atts['id'] );
+            $query_opts = self::get_query_params( $options, false, $options['id'] );
 
             // get Post List.
             $portfolio_query = new WP_Query( $query_opts );
@@ -259,10 +293,23 @@ class Visual_Portfolio_Get {
             )
         ) : false;
 
+        $options['start_page']    = $start_page;
+        $options['max_pages']     = $max_pages;
+        $options['next_page_url'] = $next_page_url;
+
         // No items found.
         if ( ( ( $is_social || $is_images ) && empty( $query_opts['images'] ) ) || isset( $portfolio_query ) && ! $portfolio_query->have_posts() ) {
             ob_start();
-            self::notice( esc_html__( 'No items found.', 'visual-portfolio' ) );
+            $class .= ' vp-portfolio-not-found';
+
+            ?>
+            <div class="<?php echo esc_attr( $class ); ?>">
+                <?php
+                self::notice( esc_html__( 'No items were found matching your selection.', 'visual-portfolio' ) );
+                ?>
+            </div>
+            <?php
+
             $return = ob_get_contents();
             ob_end_clean();
             return $return;
@@ -272,127 +319,115 @@ class Visual_Portfolio_Get {
 
         // prepare data-attributes.
         $is_preview = self::is_preview();
-        $data_atts  = array(
-            'data-vp-layout'             => $options['vp_layout'],
-            'data-vp-items-style'        => $options['vp_items_style'],
-            'data-vp-items-click-action' => $options['vp_items_click_action'],
-            'data-vp-items-gap'          => $options['vp_items_gap'],
-            'data-vp-pagination'         => $options['vp_pagination'],
+        $data_attrs = array(
+            'data-vp-layout'             => $options['layout'],
+            'data-vp-items-style'        => $options['items_style'],
+            'data-vp-items-click-action' => $options['items_click_action'],
+            'data-vp-items-gap'          => $options['items_gap'],
+            'data-vp-pagination'         => $options['pagination'],
             'data-vp-next-page-url'      => $next_page_url,
         );
 
-        if ( 'tiles' === $options['vp_layout'] || $is_preview ) {
-            $data_atts['data-vp-tiles-type'] = $options['vp_tiles_type'];
+        if ( 'tiles' === $options['layout'] || $is_preview ) {
+            $data_attrs['data-vp-tiles-type'] = $options['tiles_type'];
         }
-        if ( 'masonry' === $options['vp_layout'] || $is_preview ) {
-            $data_atts['data-vp-masonry-columns'] = $options['vp_masonry_columns'];
+        if ( 'masonry' === $options['layout'] || $is_preview ) {
+            $data_attrs['data-vp-masonry-columns'] = $options['masonry_columns'];
         }
-        if ( 'grid' === $options['vp_layout'] || $is_preview ) {
-            $data_atts['data-vp-grid-columns'] = $options['vp_grid_columns'];
+        if ( 'grid' === $options['layout'] || $is_preview ) {
+            $data_attrs['data-vp-grid-columns'] = $options['grid_columns'];
         }
-        if ( 'justified' === $options['vp_layout'] || $is_preview ) {
-            $data_atts['data-vp-justified-row-height']           = $options['vp_justified_row_height'];
-            $data_atts['data-vp-justified-row-height-tolerance'] = $options['vp_justified_row_height_tolerance'];
+        if ( 'justified' === $options['layout'] || $is_preview ) {
+            $data_attrs['data-vp-justified-row-height']           = $options['justified_row_height'];
+            $data_attrs['data-vp-justified-row-height-tolerance'] = $options['justified_row_height_tolerance'];
         }
 
-        if ( 'slider' === $options['vp_layout'] || $is_preview ) {
-            $data_atts['data-vp-slider-effect'] = $options['vp_slider_effect'];
+        if ( 'slider' === $options['layout'] || $is_preview ) {
+            $data_attrs['data-vp-slider-effect'] = $options['slider_effect'];
 
-            switch ( $options['vp_slider_items_height_type'] ) {
+            switch ( $options['slider_items_height_type'] ) {
                 case 'auto':
-                    $data_atts['data-vp-slider-items-height'] = 'auto';
+                    $data_attrs['data-vp-slider-items-height'] = 'auto';
                     break;
                 case 'static':
-                    $data_atts['data-vp-slider-items-height']     = ( $options['vp_slider_items_height_static'] ? $options['vp_slider_items_height_static'] : '200' ) . 'px';
-                    $data_atts['data-vp-slider-items-min-height'] = $options['vp_slider_items_min_height'];
+                    $data_attrs['data-vp-slider-items-height']     = ( $options['slider_items_height_static'] ? $options['slider_items_height_static'] : '200' ) . 'px';
+                    $data_attrs['data-vp-slider-items-min-height'] = $options['slider_items_min_height'];
                     break;
                 case 'dynamic':
-                    $data_atts['data-vp-slider-items-height']     = ( $options['vp_slider_items_height_dynamic'] ? $options['vp_slider_items_height_dynamic'] : '80' ) . '%';
-                    $data_atts['data-vp-slider-items-min-height'] = $options['vp_slider_items_min_height'];
+                    $data_attrs['data-vp-slider-items-height']     = ( $options['slider_items_height_dynamic'] ? $options['slider_items_height_dynamic'] : '80' ) . '%';
+                    $data_attrs['data-vp-slider-items-min-height'] = $options['slider_items_min_height'];
                     break;
                 // no default.
             }
 
-            switch ( $options['vp_slider_slides_per_view_type'] ) {
+            switch ( $options['slider_slides_per_view_type'] ) {
                 case 'auto':
-                    $data_atts['data-vp-slider-slides-per-view'] = 'auto';
+                    $data_attrs['data-vp-slider-slides-per-view'] = 'auto';
                     break;
                 case 'custom':
-                    $data_atts['data-vp-slider-slides-per-view'] = $options['vp_slider_slides_per_view_custom'] ? $options['vp_slider_slides_per_view_custom'] : '3';
+                    $data_attrs['data-vp-slider-slides-per-view'] = $options['slider_slides_per_view_custom'] ? $options['slider_slides_per_view_custom'] : '3';
                     break;
                 // no default.
             }
 
-            $data_atts['data-vp-slider-speed']                = $options['vp_slider_speed'];
-            $data_atts['data-vp-slider-autoplay']             = $options['vp_slider_autoplay'];
-            $data_atts['data-vp-slider-autoplay-hover-pause'] = $options['vp_slider_autoplay_hover_pause'] ? 'true' : 'false';
-            $data_atts['data-vp-slider-centered-slides']      = $options['vp_slider_centered_slides'] ? 'true' : 'false';
-            $data_atts['data-vp-slider-loop']                 = $options['vp_slider_loop'] ? 'true' : 'false';
-            $data_atts['data-vp-slider-free-mode']            = $options['vp_slider_free_mode'] ? 'true' : 'false';
-            $data_atts['data-vp-slider-free-mode-sticky']     = $options['vp_slider_free_mode_sticky'] ? 'true' : 'false';
-            $data_atts['data-vp-slider-arrows']               = $options['vp_slider_arrows'] ? 'true' : 'false';
-            $data_atts['data-vp-slider-arrows-icon-prev']     = $options['vp_slider_arrows_icon_prev'] ? $options['vp_slider_arrows_icon_prev'] : '';
-            $data_atts['data-vp-slider-arrows-icon-next']     = $options['vp_slider_arrows_icon_next'] ? $options['vp_slider_arrows_icon_next'] : '';
-            $data_atts['data-vp-slider-bullets']              = $options['vp_slider_bullets'] ? 'true' : 'false';
-            $data_atts['data-vp-slider-bullets-dynamic']      = $options['vp_slider_bullets_dynamic'] ? 'true' : 'false';
-            $data_atts['data-vp-slider-mousewheel']           = $options['vp_slider_mousewheel'] ? 'true' : 'false';
+            $data_attrs['data-vp-slider-speed']                = $options['slider_speed'];
+            $data_attrs['data-vp-slider-autoplay']             = $options['slider_autoplay'];
+            $data_attrs['data-vp-slider-autoplay-hover-pause'] = $options['slider_autoplay_hover_pause'] ? 'true' : 'false';
+            $data_attrs['data-vp-slider-centered-slides']      = $options['slider_centered_slides'] ? 'true' : 'false';
+            $data_attrs['data-vp-slider-loop']                 = $options['slider_loop'] ? 'true' : 'false';
+            $data_attrs['data-vp-slider-free-mode']            = $options['slider_free_mode'] ? 'true' : 'false';
+            $data_attrs['data-vp-slider-free-mode-sticky']     = $options['slider_free_mode_sticky'] ? 'true' : 'false';
+            $data_attrs['data-vp-slider-arrows']               = $options['slider_arrows'] ? 'true' : 'false';
+            $data_attrs['data-vp-slider-bullets']              = $options['slider_bullets'] ? 'true' : 'false';
+            $data_attrs['data-vp-slider-bullets-dynamic']      = $options['slider_bullets_dynamic'] ? 'true' : 'false';
+            $data_attrs['data-vp-slider-mousewheel']           = $options['slider_mousewheel'] ? 'true' : 'false';
 
-            $data_atts['data-vp-slider-thumbnails'] = $options['vp_slider_thumbnails'] ? 'true' : 'false';
+            $data_attrs['data-vp-slider-thumbnails'] = $options['slider_thumbnails'] ? 'true' : 'false';
 
-            if ( $options['vp_slider_thumbnails'] ) {
-                $data_atts['data-vp-slider-thumbnails-height'] = 'auto';
-                $data_atts['data-vp-slider-thumbnails-gap']    = $options['vp_slider_thumbnails_gap'] ? $options['vp_slider_thumbnails_gap'] : '0';
+            if ( $options['slider_thumbnails'] ) {
+                $data_attrs['data-vp-slider-thumbnails-height'] = 'auto';
+                $data_attrs['data-vp-slider-thumbnails-gap']    = $options['slider_thumbnails_gap'] ? $options['slider_thumbnails_gap'] : '0';
 
-                switch ( $options['vp_slider_thumbnails_height_type'] ) {
+                switch ( $options['slider_thumbnails_height_type'] ) {
                     case 'auto':
-                        $data_atts['data-vp-slider-thumbnails-height'] = 'auto';
+                        $data_attrs['data-vp-slider-thumbnails-height'] = 'auto';
                         break;
                     case 'static':
-                        $data_atts['data-vp-slider-thumbnails-height'] = ( $options['vp_slider_thumbnails_height_static'] ? $options['vp_slider_thumbnails_height_static'] : '100' ) . 'px';
+                        $data_attrs['data-vp-slider-thumbnails-height'] = ( $options['slider_thumbnails_height_static'] ? $options['slider_thumbnails_height_static'] : '100' ) . 'px';
                         break;
                     case 'dynamic':
-                        $data_atts['data-vp-slider-thumbnails-height'] = ( $options['vp_slider_thumbnails_height_dynamic'] ? $options['vp_slider_thumbnails_height_dynamic'] : '30' ) . '%';
+                        $data_attrs['data-vp-slider-thumbnails-height'] = ( $options['slider_thumbnails_height_dynamic'] ? $options['slider_thumbnails_height_dynamic'] : '30' ) . '%';
                         break;
                     // no default.
                 }
 
-                switch ( $options['vp_slider_thumbnails_per_view_type'] ) {
+                switch ( $options['slider_thumbnails_per_view_type'] ) {
                     case 'auto':
-                        $data_atts['data-vp-slider-thumbnails-per-view'] = 'auto';
+                        $data_attrs['data-vp-slider-thumbnails-per-view'] = 'auto';
                         break;
                     case 'custom':
-                        $data_atts['data-vp-slider-thumbnails-per-view'] = $options['vp_slider_thumbnails_per_view_custom'] ? $options['vp_slider_thumbnails_per_view_custom'] : '6';
+                        $data_attrs['data-vp-slider-thumbnails-per-view'] = $options['slider_thumbnails_per_view_custom'] ? $options['slider_thumbnails_per_view_custom'] : '6';
                         break;
                     // no default.
                 }
             }
         }
 
-        $data_atts = Visual_Portfolio_Extend::portfolio_attrs( $data_atts, $options );
+        $data_attrs = Visual_Portfolio_Extend::portfolio_attrs( $data_attrs, $options );
+        $class      = Visual_Portfolio_Extend::portfolio_class( $class, $options );
 
-        $class = Visual_Portfolio_Extend::portfolio_class( $class, $options );
+        visual_portfolio()->include_template(
+            'items-list/wrapper-start',
+            array(
+                'options'    => $options,
+                'data_attrs' => $data_attrs,
+                'class'      => $class,
+            )
+        );
 
-        ?>
-
-        <div class="<?php echo esc_attr( $class ); ?>"
-            <?php
-            foreach ( $data_atts as $name => $data ) {
-                if ( 'data-vp-next-page-url' === $name ) {
-                    echo esc_html( $name ) . '="' . esc_url( $data ) . '" ';
-                } else {
-                    echo esc_html( $name ) . '="' . esc_attr( $data ) . '" ';
-                }
-            }
-            ?>
-        >
-            <div class="vp-portfolio__preloader-wrap">
-                <div class="vp-portfolio__preloader"><span></span><span></span><span></span><span></span><i></i></div>
-            </div>
-
-        <?php
         // get options for the current style.
         $style_options      = array();
-        $style_options_slug = 'vp_items_style_' . $options['vp_items_style'] . '__';
+        $style_options_slug = 'items_style_' . $options['items_style'] . '__';
         foreach ( $options as $k => $opt ) {
             // add option to array.
             if ( substr( $k, 0, strlen( $style_options_slug ) ) === $style_options_slug ) {
@@ -402,306 +437,359 @@ class Visual_Portfolio_Get {
             }
 
             // remove style options from the options list.
-            if ( substr( $k, 0, strlen( 'vp_items_style_' ) ) === 'vp_items_style_' ) {
+            if ( substr( $k, 0, strlen( 'items_style_' ) ) === 'items_style_' ) {
                 unset( $options[ $k ] );
             }
         }
 
-        // Filter and Sort controls.
-        ob_start();
-        self::filter( $options );
-        $filter_content = ob_get_contents();
-        ob_end_clean();
-
-        ob_start();
-        self::sort( $options );
-        $sort_content = ob_get_contents();
-        ob_end_clean();
-
-        if ( $filter_content && $sort_content ) {
-            ?>
-            <div class="vp-portfolio__filter-sort-wrap">
-            <?php
-        }
-
-        // phpcs:ignore
-        echo $filter_content;
-        // phpcs:ignore
-        echo $sort_content;
-
-        if ( $filter_content && $sort_content ) {
-            ?>
-            </div>
-            <?php
-        }
+        // Top Layout elements.
+        self::print_layout_elements( 'top', $options );
 
         // Prepare thumbnails.
-        $slider_thumbnails        = array();
-        $slider_thumbnails_enable = 'slider' === $options['vp_layout'] && $options['vp_slider_thumbnails'];
+        $slider_thumbnails = array();
+
         ?>
-
         <div class="vp-portfolio__items-wrap">
-            <div class="vp-portfolio__items vp-portfolio__items-style-<?php echo esc_attr( $options['vp_items_style'] ); ?>">
-                <?php
-                $each_item_args = array(
-                    'post_id'            => '',
-                    'url'                => '',
-                    'title'              => '',
-                    'excerpt'            => '',
-                    'comments_number'    => '',
-                    'format'             => '',
-                    'published'          => '',
-                    'published_time'     => '',
-                    'filter'             => '',
-                    'video'              => '',
-                    'image_id'           => '',
-                    'image_allowed_html' => array(
-                        'img' => array(
-                            'src'             => array(),
-                            'srcset'          => array(),
-                            'sizes'           => array(),
-                            'alt'             => array(),
-                            'class'           => array(),
-                            'width'           => array(),
-                            'height'          => array(),
-
-                            // Lazyload support.
-                            'data-vpf-src'    => array(),
-                            'data-vpf-sizes'  => array(),
-                            'data-vpf-srcset' => array(),
-                            'data-no-lazy'    => array(),
-                        ),
-                    ),
-                    'img_size_popup'     => $img_size_popup,
-                    'img_size_md_popup'  => $img_size_md_popup,
-                    'img_size_sm_popup'  => $img_size_sm_popup,
-                    'img_size'           => $img_size,
-                    'no_image'           => $no_image,
-                    'categories'         => array(),
-                    'opts'               => $style_options,
-                    'vp_opts'            => $options,
-                );
-
-                if ( ( $is_images || $is_social ) &&
-                    isset( $query_opts['images'] ) &&
-                    is_array( $query_opts['images'] ) &&
-                    ! empty( $query_opts['images'] ) ) {
-
-                    foreach ( $query_opts['images'] as $img ) {
-                        // Get category taxonomies for data filter.
-                        $filter_values = array();
-                        $categories    = array();
-
-                        if ( isset( $img['categories'] ) && is_array( $img['categories'] ) ) {
-                            foreach ( $img['categories'] as $cat ) {
-                                $slug = self::create_slug( $cat );
-                                if ( ! in_array( $slug, $filter_values, true ) ) {
-                                    // add in filter.
-                                    $filter_values[] = $slug;
-
-                                    // add in categories array.
-                                    $url = self::get_pagenum_link(
-                                        array(
-                                            'vp_filter' => rawurlencode( $slug ),
-                                            'vp_page'   => 1,
-                                        )
-                                    );
-
-                                    $categories[] = array(
-                                        'slug'        => $slug,
-                                        'label'       => $cat,
-                                        'description' => '',
-                                        'count'       => '',
-                                        'taxonomy'    => '',
-                                        'id'          => 0,
-                                        'parent'      => 0,
-                                        'url'         => $url,
-                                    );
-                                }
-                            }
-                        }
-
-                        $args = apply_filters(
-                            'vpf_image_item_args',
-                            array_merge(
-                                $each_item_args,
-                                array(
-                                    'url'             => isset( $img['url'] ) && $img['url'] ? $img['url'] : wp_get_attachment_image_url( $img['id'], $img_size_popup ),
-                                    'title'           => isset( $img['title'] ) && $img['title'] ? $img['title'] : '',
-                                    'format'          => isset( $img['format'] ) && $img['format'] ? $img['format'] : 'standard',
-                                    'published_time'  => isset( $img['published_time'] ) && $img['published_time'] ? $img['published_time'] : '',
-                                    'filter'          => implode( ',', $filter_values ),
-                                    'image_id'        => intval( $img['id'] ),
-                                    'allow_popup'     => ! isset( $img['url'] ) || ! $img['url'],
-                                    'categories'      => $categories,
-                                )
-                            ),
-                            $img
-                        );
-
-                        $slider_thumbnails[] = $args['image_id'];
-
-                        // Excerpt.
-                        if ( isset( $args['opts']['show_excerpt'] ) && $args['opts']['show_excerpt'] && isset( $img['description'] ) && $img['description'] ) {
-                            $args['excerpt'] = wp_trim_words( $img['description'], $args['opts']['excerpt_words_count'], '...' );
-                        }
-
-                        if ( 'video' === $args['format'] && isset( $img['video_url'] ) && $img['video_url'] ) {
-                            $args['video'] = $img['video_url'];
-                        }
-
-                        self::each_item( $args );
-                    }
-                } elseif ( isset( $portfolio_query ) ) {
-                    while ( $portfolio_query->have_posts() ) {
-                        $portfolio_query->the_post();
-
-                        $the_post = get_post();
-
-                        self::$used_posts[] = get_the_ID();
-
-                        // Get category taxonomies for data filter.
-                        $filter_values  = array();
-                        $categories     = array();
-                        $all_taxonomies = get_object_taxonomies( $the_post );
-                        foreach ( $all_taxonomies as $cat ) {
-                            // allow only specific taxonomies for filter.
-                            if ( ! self::allow_taxonomies_for_filter( $cat ) ) {
-                                continue;
-                            }
-
-                            $category = get_the_terms( $the_post, $cat );
-
-                            if ( $category && ! in_array( $category, $filter_values, true ) ) {
-                                foreach ( $category as $key => $cat_item ) {
-                                    // add in filter.
-                                    $filter_values[] = $cat_item->slug;
-
-                                    // add in categories array.
-                                    $unique_name  = $cat_item->taxonomy . ':' . $cat_item->slug;
-                                    $url          = self::get_pagenum_link(
-                                        array(
-                                            'vp_filter' => rawurlencode( $unique_name ),
-                                            'vp_page'   => 1,
-                                        )
-                                    );
-                                    $categories[] = array(
-                                        'slug'        => $cat_item->slug,
-                                        'label'       => $cat_item->name,
-                                        'description' => $cat_item->description,
-                                        'count'       => $cat_item->count,
-                                        'taxonomy'    => $cat_item->taxonomy,
-                                        'id'          => $cat_item->term_id,
-                                        'parent'      => $cat_item->parent,
-                                        'url'         => $url,
-                                    );
-                                }
-                            }
-                        }
-
-                        $args = apply_filters(
-                            'vpf_post_item_args',
-                            array_merge(
-                                $each_item_args,
-                                array(
-                                    'post_id'        => get_the_ID(),
-                                    'url'            => get_permalink(),
-                                    'title'          => get_the_title(),
-                                    'format'         => get_post_format() ? get_post_format() : 'standard',
-                                    'published_time' => get_the_date( 'Y-m-d H:i:s', $the_post ),
-                                    'filter'         => implode( ',', $filter_values ),
-                                    'image_id'       => 'attachment' === get_post_type() ? get_the_ID() : get_post_thumbnail_id( get_the_ID() ),
-                                    'categories'     => $categories,
-                                )
-                            ),
-                            get_the_ID()
-                        );
-
-                        $args['allow_popup'] = isset( $args['image_id'] ) && $args['image_id'];
-
-                        $args['comments_number'] = get_comments_number();
-
-                        $slider_thumbnails[] = $args['image_id'];
-
-                        // Excerpt.
-                        if ( isset( $args['opts']['show_excerpt'] ) && $args['opts']['show_excerpt'] ) {
-                            $args['excerpt'] = wp_trim_words( do_shortcode( has_excerpt() ? get_the_excerpt() : get_the_content() ), $args['opts']['excerpt_words_count'], '...' );
-                        }
-
-                        if ( 'video' === $args['format'] ) {
-                            $video_url = get_post_meta( get_the_ID(), 'video_url', true );
-                            if ( $video_url ) {
-                                $args['video']       = $video_url;
-                                $args['allow_popup'] = true;
-                            }
-                        }
-
-                        self::each_item( $args );
-                    }
-
-                    $portfolio_query->reset_postdata();
-                }
-
-                ?>
-            </div>
-        </div>
-
         <?php
 
-        if ( $slider_thumbnails_enable ) {
-            ?>
-            <div class="vp-portfolio__thumbnails-wrap">
-                <div class="vp-portfolio__thumbnails">
-                    <?php
-                    foreach ( $slider_thumbnails as $image_id ) {
-                        ?>
-                        <div class="vp-portfolio__thumbnail-wrap">
-                            <div class="vp-portfolio__thumbnail">
-                                <div class="vp-portfolio__thumbnail-img-wrap">
-                                    <div class="vp-portfolio__thumbnail-img">
-                                        <?php
-                                        // phpcs:ignore
-                                        echo Visual_Portfolio_Images::get_attachment_image( $image_id, $args['img_size'] );
-                                        ?>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <?php
+        visual_portfolio()->include_template(
+            'items-list/items-wrapper-start',
+            array(
+                'options' => $options,
+            )
+        );
+
+        $each_item_args = array(
+            'uid'                => '',
+            'post_id'            => '',
+            'url'                => '',
+            'title'              => '',
+            'excerpt'            => '',
+            'comments_count'     => '',
+            'comments_url'       => '',
+            'author'             => '',
+            'author_url'         => '',
+            'author_avatar'      => '',
+            'views_count'        => '',
+            'reading_time'       => '',
+            'format'             => '',
+            'published'          => '',
+            'published_time'     => '',
+            'categories'         => array(),
+            'filter'             => '',
+            'video'              => '',
+            'image_id'           => '',
+            'image_allowed_html' => array(
+                'img' => array(
+                    'src'             => array(),
+                    'srcset'          => array(),
+                    'sizes'           => array(),
+                    'alt'             => array(),
+                    'class'           => array(),
+                    'width'           => array(),
+                    'height'          => array(),
+
+                    // Lazyload support.
+                    'data-vpf-src'    => array(),
+                    'data-vpf-sizes'  => array(),
+                    'data-vpf-srcset' => array(),
+                    'data-no-lazy'    => array(),
+                ),
+            ),
+            'img_size_popup'     => $img_size_popup,
+            'img_size_md_popup'  => $img_size_md_popup,
+            'img_size_sm_popup'  => $img_size_sm_popup,
+            'img_size'           => $img_size,
+            'no_image'           => $no_image,
+            'opts'               => $style_options,
+            'vp_opts'            => $options,
+        );
+
+        if ( ( $is_images || $is_social ) &&
+            isset( $query_opts['images'] ) &&
+            is_array( $query_opts['images'] ) &&
+            ! empty( $query_opts['images'] ) ) {
+
+            foreach ( $query_opts['images'] as $img ) {
+                // Get category taxonomies for data filter.
+                $filter_values = array();
+                $categories    = array();
+
+                if ( isset( $img['categories'] ) && is_array( $img['categories'] ) ) {
+                    foreach ( $img['categories'] as $cat ) {
+                        $slug = self::create_slug( $cat );
+                        if ( ! in_array( $slug, $filter_values, true ) ) {
+                            // add in filter.
+                            $filter_values[] = $slug;
+
+                            // add in categories array.
+                            $url = self::get_pagenum_link(
+                                array(
+                                    'vp_filter' => rawurlencode( $slug ),
+                                    'vp_page'   => 1,
+                                )
+                            );
+
+                            $categories[] = array(
+                                'slug'        => $slug,
+                                'label'       => $cat,
+                                'description' => '',
+                                'count'       => '',
+                                'taxonomy'    => '',
+                                'id'          => 0,
+                                'parent'      => 0,
+                                'url'         => $url,
+                            );
+                        }
                     }
-                    ?>
-                </div>
-            </div>
-            <?php
+                }
+
+                $args = apply_filters(
+                    'vpf_image_item_args',
+                    array_merge(
+                        $each_item_args,
+                        array(
+                            'uid'             => isset( $img['uid'] ) && $img['uid'] ? $img['uid'] : '',
+                            'url'             => isset( $img['url'] ) && $img['url'] ? $img['url'] : wp_get_attachment_image_url( $img['id'], $img_size_popup ),
+                            'title'           => isset( $img['title'] ) && $img['title'] ? $img['title'] : '',
+                            'format'          => isset( $img['format'] ) && $img['format'] ? $img['format'] : 'standard',
+                            'published_time'  => isset( $img['published_time'] ) && $img['published_time'] ? $img['published_time'] : '',
+                            'filter'          => implode( ',', $filter_values ),
+                            'image_id'        => intval( $img['id'] ),
+                            'allow_popup'     => ! isset( $img['url'] ) || ! $img['url'],
+                            'categories'      => $categories,
+                        )
+                    ),
+                    $img
+                );
+
+                $slider_thumbnails[] = $args['image_id'];
+
+                // Excerpt.
+                if ( isset( $args['opts']['show_excerpt'] ) && $args['opts']['show_excerpt'] && isset( $img['description'] ) && $img['description'] ) {
+                    $args['excerpt'] = wp_trim_words( $img['description'], $args['opts']['excerpt_words_count'], '...' );
+                }
+
+                if ( 'video' === $args['format'] && isset( $img['video_url'] ) && $img['video_url'] ) {
+                    $args['video'] = $img['video_url'];
+                }
+
+                self::each_item( $args );
+            }
+        } elseif ( isset( $portfolio_query ) ) {
+            while ( $portfolio_query->have_posts() ) {
+                $portfolio_query->the_post();
+
+                $the_post = get_post();
+
+                self::$used_posts[] = get_the_ID();
+
+                // Get category taxonomies for data filter.
+                $filter_values  = array();
+                $categories     = array();
+                $all_taxonomies = get_object_taxonomies( $the_post );
+
+                foreach ( $all_taxonomies as $cat ) {
+                    // allow only specific taxonomies for filter.
+                    if ( ! self::allow_taxonomies_for_filter( $cat ) ) {
+                        continue;
+                    }
+
+                    $category = get_the_terms( $the_post, $cat );
+
+                    if ( $category && ! in_array( $category, $filter_values, true ) ) {
+                        foreach ( $category as $key => $cat_item ) {
+                            // add in filter.
+                            $filter_values[] = $cat_item->slug;
+
+                            // add in categories array.
+                            $unique_name  = $cat_item->taxonomy . ':' . $cat_item->slug;
+                            $url          = self::get_pagenum_link(
+                                array(
+                                    'vp_filter' => rawurlencode( $unique_name ),
+                                    'vp_page'   => 1,
+                                )
+                            );
+                            $categories[] = array(
+                                'slug'        => $cat_item->slug,
+                                'label'       => $cat_item->name,
+                                'description' => $cat_item->description,
+                                'count'       => $cat_item->count,
+                                'taxonomy'    => $cat_item->taxonomy,
+                                'id'          => $cat_item->term_id,
+                                'parent'      => $cat_item->parent,
+                                'url'         => $url,
+                            );
+                        }
+                    }
+                }
+
+                $args = array_merge(
+                    $each_item_args,
+                    array(
+                        'uid'            => hash( 'crc32b', 'post-' . get_the_ID() ),
+                        'post_id'        => get_the_ID(),
+                        'url'            => get_permalink(),
+                        'title'          => get_the_title(),
+                        'format'         => get_post_format() ? get_post_format() : 'standard',
+                        'published_time' => get_the_date( 'Y-m-d H:i:s', $the_post ),
+                        'filter'         => implode( ',', $filter_values ),
+                        'image_id'       => 'attachment' === get_post_type() ? get_the_ID() : get_post_thumbnail_id( get_the_ID() ),
+                        'categories'     => $categories,
+                        'comments_count' => get_comments_number( get_the_ID() ),
+                        'comments_url'   => get_comments_link( get_the_ID() ),
+                        'views_count'    => Visual_Portfolio_Custom_Post_Meta::get_views_count( get_the_ID() ),
+                        'reading_time'   => Visual_Portfolio_Custom_Post_Meta::get_reading_time( get_the_ID() ),
+                    )
+                );
+
+                // Author.
+                $author_id = get_the_author_meta( 'ID' );
+                if ( $author_id ) {
+                    $args['author']        = get_the_author();
+                    $args['author_url']    = get_author_posts_url( $author_id );
+                    $args['author_avatar'] = get_avatar_url( $author_id, array( 'size' => 50 ) );
+                }
+
+                // Excerpt.
+                if ( isset( $args['opts']['show_excerpt'] ) && $args['opts']['show_excerpt'] ) {
+                    $args['excerpt'] = wp_trim_words( do_shortcode( has_excerpt() ? get_the_excerpt() : get_the_content() ), $args['opts']['excerpt_words_count'], '...' );
+                }
+
+                $args['allow_popup'] = isset( $args['image_id'] ) && $args['image_id'];
+
+                if ( 'video' === $args['format'] ) {
+                    $video_url = Visual_Portfolio_Custom_Post_Meta::get_video_format_url( get_the_ID() );
+                    if ( $video_url ) {
+                        $args['video']       = $video_url;
+                        $args['allow_popup'] = true;
+                    }
+                }
+
+                $slider_thumbnails[] = $args['image_id'];
+
+                $args = apply_filters( 'vpf_post_item_args', $args, $args['post_id'] );
+
+                self::each_item( $args );
+            }
+
+            $portfolio_query->reset_postdata();
+        }
+
+        visual_portfolio()->include_template(
+            'items-list/items-wrapper-end',
+            array(
+                'options' => $options,
+            )
+        );
+
+        // Slider arrows and bullets.
+        if ( 'slider' === $options['layout'] ) {
+            if ( $options['slider_arrows'] ) {
+                visual_portfolio()->include_template(
+                    'items-list/layouts/slider/arrows',
+                    array(
+                        'options' => $options,
+                    )
+                );
+            }
+            if ( $options['slider_bullets'] ) {
+                visual_portfolio()->include_template(
+                    'items-list/layouts/slider/bullets',
+                    array(
+                        'options' => $options,
+                    )
+                );
+            }
         }
 
         ?>
-
+        </div>
         <?php
-        self::pagination(
-            $options,
+
+        // Slider thumbnails.
+        if ( 'slider' === $options['layout'] && $options['slider_thumbnails'] ) {
+            visual_portfolio()->include_template(
+                'items-list/layouts/slider/thumbnails',
+                array(
+                    'options'    => $options,
+                    'thumbnails' => $slider_thumbnails,
+                    'img_size'   => $img_size,
+                )
+            );
+        }
+
+        // Bottom Layout elements.
+        self::print_layout_elements( 'bottom', $options );
+
+        visual_portfolio()->include_template(
+            'items-list/wrapper-end',
             array(
-                'start_page'    => $start_page,
-                'max_pages'     => $max_pages,
-                'next_page_url' => $next_page_url,
+                'options' => $options,
             )
         );
-        ?>
 
-        </div>
-
-        <?php
+        do_action( 'vpf_after_get_output', $options );
 
         // stupid hack as wp_reset_postdata() function is not working for some reason...
         // phpcs:ignore
         $GLOBALS['post'] = $old_post;
 
-        do_action( 'vpf_after_get_output' );
-
         $return = ob_get_contents();
         ob_end_clean();
 
         return $return;
+    }
+
+    /**
+     * Print layout elements like Filter, Sort, Search and Pagination.
+     *
+     * @param string $position elements position.
+     * @param array  $options options for portfolio list to print.
+     */
+    public static function print_layout_elements( $position, $options ) {
+        $layout_elements = $options['layout_elements'];
+
+        if ( ! isset( $layout_elements[ $position ] ) || ! isset( $layout_elements[ $position ]['elements'] ) ) {
+            return;
+        }
+
+        $registered   = Visual_Portfolio_Controls::get_registered_array();
+        $control_data = $registered['layout_elements'];
+        $class_name   = 'vp-portfolio__layout-elements';
+
+        if ( $position ) {
+            $class_name .= ' vp-portfolio__layout-elements-' . $position;
+        }
+
+        if ( isset( $layout_elements[ $position ]['align'] ) ) {
+            $class_name .= ' vp-portfolio__layout-elements-align-' . $layout_elements[ $position ]['align'];
+        }
+
+        ob_start();
+        foreach ( $layout_elements[ $position ]['elements'] as $element ) {
+            if ( isset( $control_data['options'][ $element ]['render_callback'] ) && is_callable( $control_data['options'][ $element ]['render_callback'] ) ) {
+                call_user_func( $control_data['options'][ $element ]['render_callback'], $options, $element, $position );
+            }
+            do_action( 'vpf_layout_elements', $options, $element, $position );
+        }
+        $elements_content = ob_get_contents();
+        ob_end_clean();
+
+        if ( ! $elements_content ) {
+            return;
+        }
+
+        ?>
+        <div class="<?php echo esc_attr( $class_name ); ?>">
+        <?php
+
+        // phpcs:ignore
+        echo $elements_content;
+
+        ?>
+        </div>
+        <?php
     }
 
     /**
@@ -712,22 +800,22 @@ class Visual_Portfolio_Get {
      * @return string
      */
     public static function get_filter( $atts = array() ) {
-        $options = self::get_options( $atts['id'] );
+        $options = self::get_options( $atts );
 
         $options = array_merge(
             $options,
             array(
-                'vp_filter'            => $atts['type'],
-                'vp_filter_align'      => $atts['align'],
-                'vp_filter_show_count' => 'true' === $atts['show_count'],
+                'filter'            => $atts['type'],
+                'filter_align'      => $atts['align'],
+                'filter_show_count' => 'true' === $atts['show_count'],
             )
         );
 
         // generate unique ID.
         $uid = ++self::$filter_id;
-        $uid = hash( 'crc32b', $uid . $atts['id'] );
+        $uid = hash( 'crc32b', $uid . $options['id'] );
 
-        $class = 'vp-single-filter vp-filter-uid-' . $uid . ' vp-id-' . $atts['id'];
+        $class = 'vp-single-filter vp-filter-uid-' . $uid . ' vp-id-' . $options['id'];
 
         // Add custom class.
         if ( isset( $atts['class'] ) ) {
@@ -754,21 +842,21 @@ class Visual_Portfolio_Get {
      * @return string
      */
     public static function get_sort( $atts = array() ) {
-        $options = self::get_options( $atts['id'] );
+        $options = self::get_options( $atts );
 
         $options = array_merge(
             $options,
             array(
-                'vp_sort'       => $atts['type'],
-                'vp_sort_align' => $atts['align'],
+                'sort'       => $atts['type'],
+                'sort_align' => $atts['align'],
             )
         );
 
         // generate unique ID.
         $uid = ++self::$sort_id;
-        $uid = hash( 'crc32b', $uid . $atts['id'] );
+        $uid = hash( 'crc32b', $uid . $options['id'] );
 
-        $class = 'vp-single-sort vp-sort-uid-' . $uid . ' vp-id-' . $atts['id'];
+        $class = 'vp-single-sort vp-sort-uid-' . $uid . ' vp-id-' . $options['id'];
 
         // Add custom class.
         if ( isset( $atts['class'] ) ) {
@@ -840,18 +928,27 @@ class Visual_Portfolio_Get {
      * @return array
      */
     private static function get_query_params( $options, $for_filter = false, $layout_id = false ) {
+        $options    = Visual_Portfolio_Extend::options_before_query_args( $options, $layout_id );
         $query_opts = array();
-
-        $is_images = 'images' === $options['vp_content_source'];
+        $is_images  = 'images' === $options['content_source'];
 
         $paged = 0;
-        if ( $options['vp_pagination'] || $is_images ) {
+        if ( $options['pagination'] || $is_images ) {
             $paged = self::get_current_page_number();
         }
-        $count = intval( $options['vp_items_count'] );
+        $count = intval( $options['items_count'] );
 
         if ( $is_images ) {
             $query_opts['images'] = array();
+
+            if ( ! isset( $options['images'] ) || ! is_array( $options['images'] ) ) {
+                $options['images'] = array();
+            }
+
+            // add unique IDs.
+            foreach ( $options['images'] as $k => $img ) {
+                $options['images'][ $k ]['uid'] = hash( 'crc32b', 'image-' . $k . $img['id'] );
+            }
 
             if ( $count < 0 ) {
                 $count = 99999;
@@ -865,7 +962,7 @@ class Visual_Portfolio_Get {
                 // phpcs:ignore
                 $category = sanitize_text_field( wp_unslash( $_GET['vp_filter'] ) );
 
-                foreach ( (array) $options['vp_images'] as $img ) {
+                foreach ( $options['images'] as $img ) {
                     if ( isset( $img['categories'] ) && is_array( $img['categories'] ) ) {
                         foreach ( $img['categories'] as $cat ) {
                             if ( self::create_slug( $cat ) === $category ) {
@@ -876,7 +973,7 @@ class Visual_Portfolio_Get {
                     }
                 }
             } else {
-                $images = (array) $options['vp_images'];
+                $images = $options['images'];
             }
 
             // prepare titles and descriptions.
@@ -894,7 +991,7 @@ class Visual_Portfolio_Get {
 
                 if ( $attachment ) {
                     // get image meta if needed.
-                    if ( 'none' !== $options['vp_images_titles_source'] || 'none' !== $options['vp_images_descriptions_source'] ) {
+                    if ( 'none' !== $options['images_titles_source'] || 'none' !== $options['images_descriptions_source'] ) {
                         if ( $attachment && 'attachment' === $attachment->post_type ) {
                             $img_meta['title']       = $attachment->post_title;
                             $img_meta['description'] = $attachment->post_content;
@@ -904,13 +1001,13 @@ class Visual_Portfolio_Get {
                     }
 
                     // title.
-                    if ( 'custom' !== $options['vp_images_titles_source'] ) {
-                        $images[ $k ]['title'] = $img_meta[ $options['vp_images_titles_source'] ];
+                    if ( 'custom' !== $options['images_titles_source'] ) {
+                        $images[ $k ]['title'] = isset( $img_meta[ $options['images_titles_source'] ] ) ? $img_meta[ $options['images_titles_source'] ] : '';
                     }
 
                     // description.
-                    if ( 'custom' !== $options['vp_images_descriptions_source'] ) {
-                        $images[ $k ]['description'] = $img_meta[ $options['vp_images_descriptions_source'] ];
+                    if ( 'custom' !== $options['images_descriptions_source'] ) {
+                        $images[ $k ]['description'] = isset( $img_meta[ $options['images_descriptions_source'] ] ) ? $img_meta[ $options['images_descriptions_source'] ] : '';
                     }
 
                     // add published date.
@@ -920,10 +1017,10 @@ class Visual_Portfolio_Get {
 
             // order.
             $custom_order           = false;
-            $custom_order_direction = $options['vp_images_order_direction'];
+            $custom_order_direction = $options['images_order_direction'];
 
-            if ( isset( $options['vp_images_order_by'] ) ) {
-                $custom_order = $options['vp_images_order_by'];
+            if ( isset( $options['images_order_by'] ) ) {
+                $custom_order = $options['images_order_by'];
             }
 
             // custom sorting.
@@ -1020,14 +1117,14 @@ class Visual_Portfolio_Get {
             );
 
             // Post based.
-            if ( 'post-based' === $options['vp_content_source'] ) {
+            if ( 'post-based' === $options['content_source'] ) {
                 // Exclude IDs.
-                if ( ! empty( $options['vp_posts_excluded_ids'] ) ) {
-                    $query_opts['post__not_in'] = $options['vp_posts_excluded_ids'];
+                if ( ! empty( $options['posts_excluded_ids'] ) ) {
+                    $query_opts['post__not_in'] = $options['posts_excluded_ids'];
                 }
 
                 // Order By.
-                switch ( $options['vp_posts_order_by'] ) {
+                switch ( $options['posts_order_by'] ) {
                     case 'title':
                         $query_opts['orderby'] = 'title';
                         break;
@@ -1044,10 +1141,17 @@ class Visual_Portfolio_Get {
                         $query_opts['orderby'] = 'menu_order';
                         break;
 
+                    case 'comment_count':
+                        $query_opts['orderby'] = 'comment_count';
+                        break;
+
+                    case 'modified':
+                        $query_opts['orderby'] = 'modified';
+                        break;
+
                     case 'rand':
                         // Update ORDER BY clause to use vpf_random_seed.
                         $query_opts['orderby'] = 'RAND(' . self::get_rand_seed_session() . ')';
-
                         break;
 
                     default:
@@ -1056,26 +1160,28 @@ class Visual_Portfolio_Get {
                 }
 
                 // Order.
-                $query_opts['order'] = $options['vp_posts_order_direction'];
+                $query_opts['order'] = $options['posts_order_direction'];
 
-                if ( 'ids' === $options['vp_posts_source'] ) { // IDs.
+                if ( 'ids' === $options['posts_source'] ) { // IDs.
                     $query_opts['post_type']    = 'any';
                     $query_opts['post__not_in'] = array();
 
-                    if ( ! empty( $options['vp_posts_ids'] ) ) {
-                        $query_opts['post__in'] = $options['vp_posts_ids'];
+                    if ( ! empty( $options['posts_ids'] ) ) {
+                        $query_opts['post__in'] = $options['posts_ids'];
                     }
-                } elseif ( 'custom_query' === $options['vp_posts_source'] ) { // Custom Query.
+                } elseif ( 'custom_query' === $options['posts_source'] ) { // Custom Query.
                     $query_opts['post_type'] = 'any';
 
                     $tmp_arr = array();
-                    parse_str( html_entity_decode( $options['vp_posts_custom_query'] ), $tmp_arr );
+                    parse_str( html_entity_decode( $options['posts_custom_query'] ), $tmp_arr );
                     $query_opts = array_merge( $query_opts, $tmp_arr );
+                } elseif ( 'current_query' === $options['posts_source'] ) {
+                    $query_opts = $GLOBALS['wp_query']->query_vars;
                 } else {
-                    $query_opts['post_type'] = $options['vp_posts_source'];
+                    $query_opts['post_type'] = $options['posts_source'];
 
                     // Taxonomies.
-                    if ( ! empty( $options['vp_posts_taxonomies'] ) && ! isset( $query_opts['tax_query'] ) ) {
+                    if ( ! empty( $options['posts_taxonomies'] ) && ! isset( $query_opts['tax_query'] ) ) {
                         $terms_list = get_terms(
                             get_object_taxonomies(
                                 get_post_types(
@@ -1091,17 +1197,17 @@ class Visual_Portfolio_Get {
 
                         // phpcs:ignore
                         $query_opts['tax_query'] = array(
-                            'relation' => $options['vp_posts_taxonomies_relation'],
+                            'relation' => $options['posts_taxonomies_relation'],
                         );
 
                         // We need this empty array, because when taxonomy selected,
                         // ant posts don't have this taxonomy, we will see all available posts.
                         // Related topic: https://wordpress.org/support/topic/exclude-certain-category-from-filter/.
-                        if ( 'OR' === $options['vp_posts_taxonomies_relation'] ) {
+                        if ( 'OR' === $options['posts_taxonomies_relation'] ) {
                             $query_opts['tax_query'][] = array();
                         }
 
-                        foreach ( $options['vp_posts_taxonomies'] as $taxonomy ) {
+                        foreach ( $options['posts_taxonomies'] as $taxonomy ) {
                             $taxonomy_name = null;
 
                             foreach ( $terms_list as $term ) {
@@ -1120,10 +1226,15 @@ class Visual_Portfolio_Get {
                             }
                         }
                     }
+
+                    // Offset.
+                    if ( $options['posts_offset'] ) {
+                        $query_opts['offset'] = $options['posts_offset'] + ( $paged - 1 ) * $count;
+                    }
                 }
 
-                // Avoid duplicate posts.
-                if ( $options['vp_posts_avoid_duplicate_posts'] ) {
+                // Avoid duplicates.
+                if ( $options['posts_avoid_duplicate_posts'] ) {
                     $not_id                     = (array) ( isset( $query_opts['post__not_in'] ) ? $query_opts['post__not_in'] : array() );
                     $query_opts['post__not_in'] = array_merge( $not_id, self::get_all_used_posts() );
 
@@ -1206,7 +1317,6 @@ class Visual_Portfolio_Get {
                 'notice' => $notice,
             )
         );
-        visual_portfolio()->include_template_style( 'visual-portfolio-notices-default', 'notices/style' );
     }
 
     /**
@@ -1214,15 +1324,15 @@ class Visual_Portfolio_Get {
      *
      * @param array $vp_options current vp_list options.
      */
-    private static function filter( $vp_options ) {
-        if ( ! $vp_options['vp_filter'] ) {
+    public static function filter( $vp_options ) {
+        if ( ! $vp_options['filter'] ) {
             return;
         }
 
         $terms           = array();
         $there_is_active = false;
-        $is_images       = 'images' === $vp_options['vp_content_source'];
-        $is_social       = 'social-stream' === $vp_options['vp_content_source'];
+        $is_images       = 'images' === $vp_options['content_source'];
+        $is_social       = 'social-stream' === $vp_options['content_source'];
 
         // Get active item.
         $active_item = false;
@@ -1370,12 +1480,12 @@ class Visual_Portfolio_Get {
         }
 
         // Add 'All' active item.
-        if ( ! empty( $terms ) && $vp_options['vp_filter_text_all'] ) {
+        if ( ! empty( $terms ) && $vp_options['filter_text_all'] ) {
             array_unshift(
                 $terms,
                 array(
                     'filter'      => '*',
-                    'label'       => $vp_options['vp_filter_text_all'],
+                    'label'       => $vp_options['filter_text_all'],
                     'description' => false,
                     'count'       => false,
                     'id'          => 0,
@@ -1399,7 +1509,7 @@ class Visual_Portfolio_Get {
 
         // get options for the current filter.
         $filter_options      = array();
-        $filter_options_slug = 'vp_filter_' . $vp_options['vp_filter'] . '__';
+        $filter_options_slug = 'filter_' . $vp_options['filter'] . '__';
 
         foreach ( $vp_options as $k => $opt ) {
             // add option to array.
@@ -1417,15 +1527,10 @@ class Visual_Portfolio_Get {
         $args = array(
             'class'      => 'vp-filter',
             'items'      => Visual_Portfolio_Extend::filter_items( $terms, $vp_options ),
-            'align'      => $vp_options['vp_filter_align'],
-            'show_count' => $vp_options['vp_filter_show_count'],
+            'show_count' => $vp_options['filter_show_count'],
             'opts'       => $filter_options,
             'vp_opts'    => $vp_options,
         );
-
-        if ( $vp_options['vp_filter_align'] ) {
-            $args['class'] .= ' vp-filter__align-' . $vp_options['vp_filter_align'];
-        }
 
         ?>
         <div class="vp-portfolio__filter-wrap">
@@ -1433,8 +1538,8 @@ class Visual_Portfolio_Get {
 
         $filter_style_pref = '';
 
-        if ( 'default' !== $vp_options['vp_filter'] ) {
-            $filter_style_pref = '/' . $vp_options['vp_filter'];
+        if ( 'default' !== $vp_options['filter'] ) {
+            $filter_style_pref = '/' . $vp_options['filter'];
         }
 
         visual_portfolio()->include_template( 'items-list/filter' . $filter_style_pref . '/filter', $args );
@@ -1449,8 +1554,8 @@ class Visual_Portfolio_Get {
      *
      * @param array $vp_options current vp_list options.
      */
-    private static function sort( $vp_options ) {
-        if ( ! $vp_options['vp_sort'] ) {
+    public static function sort( $vp_options ) {
+        if ( ! $vp_options['sort'] ) {
             return;
         }
 
@@ -1499,7 +1604,7 @@ class Visual_Portfolio_Get {
 
         // get options for the current sort.
         $sort_options      = array();
-        $sort_options_slug = 'vp_sort_' . $vp_options['vp_sort'] . '__';
+        $sort_options_slug = 'sort_' . $vp_options['sort'] . '__';
 
         foreach ( $vp_options as $k => $opt ) {
             // add option to array.
@@ -1517,14 +1622,9 @@ class Visual_Portfolio_Get {
         $args = array(
             'class'   => 'vp-sort',
             'items'   => $terms,
-            'align'   => $vp_options['vp_sort_align'],
             'opts'    => $sort_options,
             'vp_opts' => $vp_options,
         );
-
-        if ( $vp_options['vp_sort_align'] ) {
-            $args['class'] .= ' vp-sort__align-' . $vp_options['vp_sort_align'];
-        }
 
         ?>
         <div class="vp-portfolio__sort-wrap">
@@ -1532,8 +1632,8 @@ class Visual_Portfolio_Get {
 
         $sort_style_pref = '';
 
-        if ( 'default' !== $vp_options['vp_sort'] ) {
-            $sort_style_pref = '/' . $vp_options['vp_sort'];
+        if ( 'default' !== $vp_options['sort'] ) {
+            $sort_style_pref = '/' . $vp_options['sort'];
         }
 
         visual_portfolio()->include_template( 'items-list/sort' . $sort_style_pref . '/sort', $args );
@@ -1568,7 +1668,7 @@ class Visual_Portfolio_Get {
     private static function each_item( $args ) {
         global $post;
 
-        $is_posts = 'post-based' === $args['vp_opts']['vp_content_source'] || 'portfolio' === $args['vp_opts']['vp_content_source'];
+        $is_posts = 'post-based' === $args['vp_opts']['content_source'] || 'portfolio' === $args['vp_opts']['content_source'];
 
         // prepare image.
         $args['image']          = Visual_Portfolio_Images::get_attachment_image( $args['image_id'], $args['img_size'], false, '', true );
@@ -1608,58 +1708,14 @@ class Visual_Portfolio_Get {
         }
 
         // Click action.
-        $popup_image = false;
-        $popup_video = false;
-
-        switch ( $args['vp_opts']['vp_items_click_action'] ) {
+        switch ( $args['vp_opts']['items_click_action'] ) {
             case 'popup_gallery':
-                if ( isset( $args['allow_popup'] ) && $args['allow_popup'] ) {
-                    if ( isset( $args['format_video_url'] ) && $args['format_video_url'] ) {
-                        $popup_video = array(
-                            'url' => $args['format_video_url'],
-                        );
-                    } else {
-                        $img_id = $args['image_id'] ? $args['image_id'] : $args['no_image'];
-
-                        if ( $img_id ) {
-                            $attachment = get_post( $args['image_id'] );
-                            if ( $attachment && 'attachment' === $attachment->post_type ) {
-                                $img_meta    = wp_get_attachment_image_src( $args['image_id'], $args['img_size_popup'] );
-                                $img_md_meta = wp_get_attachment_image_src( $args['image_id'], $args['img_size_md_popup'] );
-                                $img_sm_meta = wp_get_attachment_image_src( $args['image_id'], $args['img_size_sm_popup'] );
-
-                                $popup_image = apply_filters(
-                                    'vpf_extend_popup_image',
-                                    array(
-                                        'id'          => $args['image_id'],
-                                        'title'       => $attachment->post_title,
-                                        'description' => $attachment->post_content,
-                                        'caption'     => wp_get_attachment_caption( $attachment->ID ),
-                                        'alt'         => get_post_meta( $attachment->ID, '_wp_attachment_image_alt', true ),
-                                        'url'         => $img_meta[0],
-                                        'srcset'      => wp_get_attachment_image_srcset( $args['image_id'], $args['img_size_popup'] ),
-                                        'width'       => $img_meta[1],
-                                        'height'      => $img_meta[2],
-                                        'md_url'      => $img_md_meta[0],
-                                        'md_width'    => $img_md_meta[1],
-                                        'md_height'   => $img_md_meta[2],
-                                        'sm_url'      => $img_sm_meta[0],
-                                        'sm_width'    => $img_sm_meta[1],
-                                        'sm_height'   => $img_sm_meta[2],
-                                    )
-                                );
-                            } elseif ( $args['image_id'] ) {
-                                $popup_image = apply_filters( 'vpf_extend_custom_popup_image', false, $args['image_id'] );
-                            }
-                        }
-                    }
-                }
                 break;
             case false:
                 $args['url'] = false;
                 break;
             default:
-                $args['url_target'] = $args['vp_opts']['vp_items_click_action_url_target'] ? $args['vp_opts']['vp_items_click_action_url_target'] : '';
+                $args['url_target'] = $args['vp_opts']['items_click_action_url_target'] ? $args['vp_opts']['items_click_action_url_target'] : '';
                 break;
         }
 
@@ -1677,55 +1733,21 @@ class Visual_Portfolio_Get {
             // post_class functionality.
             $class_name = join( ' ', get_post_class( $class_name, get_the_ID() ) );
         }
+        if ( $args['uid'] ) {
+            $class_name .= ' vp-portfolio__item-uid-' . esc_attr( $args['uid'] );
+        }
 
         // Tag Name.
         $tag_name = $is_posts ? 'article' : 'div';
         ?>
 
         <<?php echo esc_attr( $tag_name ); ?> class="<?php echo esc_attr( $class_name ); ?>" data-vp-filter="<?php echo esc_attr( $args['filter'] ); ?>">
-            <?php
-            if ( $popup_image ) {
-                $title_source       = $args['vp_opts']['vp_items_click_action_popup_title_source'] ? $args['vp_opts']['vp_items_click_action_popup_title_source'] : '';
-                $description_source = $args['vp_opts']['vp_items_click_action_popup_description_source'] ? $args['vp_opts']['vp_items_click_action_popup_description_source'] : '';
-                ?>
-                <div class="vp-portfolio__item-popup"
-                    style="display: none;"
-                    data-vp-popup-img="<?php echo esc_url( $popup_image['url'] ); ?>"
-                    data-vp-popup-img-srcset="<?php echo esc_attr( $popup_image['srcset'] ); ?>"
-                    data-vp-popup-img-size="<?php echo esc_attr( $popup_image['width'] . 'x' . $popup_image['height'] ); ?>"
-                    data-vp-popup-md-img="<?php echo esc_url( $popup_image['md_url'] ); ?>"
-                    data-vp-popup-md-img-size="<?php echo esc_attr( $popup_image['md_width'] . 'x' . $popup_image['md_height'] ); ?>"
-                    data-vp-popup-sm-img="<?php echo esc_url( $popup_image['sm_url'] ); ?>"
-                    data-vp-popup-sm-img-size="<?php echo esc_attr( $popup_image['sm_width'] . 'x' . $popup_image['sm_height'] ); ?>"
-                >
-                    <?php
-                    if ( isset( $popup_image[ $title_source ] ) && $popup_image[ $title_source ] ) {
-                        ?>
-                        <h3 class="vp-portfolio__item-popup-title"><?php echo esc_html( $popup_image[ $title_source ] ); ?></h3>
-                        <?php
-                    }
-                    if ( isset( $popup_image[ $description_source ] ) && $popup_image[ $description_source ] ) {
-                        ?>
-                        <div class="vp-portfolio__item-popup-description"><?php echo wp_kses_post( $popup_image[ $description_source ] ); ?></div>
-                        <?php
-                    }
-                    ?>
-                </div>
-                <?php
-            } elseif ( $popup_video ) {
-                ?>
-                <div class="vp-portfolio__item-popup"
-                    style="display: none;"
-                    data-vp-popup-video="<?php echo esc_attr( $popup_video['url'] ); ?>"
-                ></div>
-                <?php
-            }
-            ?>
+            <?php self::item_popup_data( $args ); ?>
             <figure class="vp-portfolio__item">
                 <?php
                 $items_style_pref = '';
-                if ( 'default' !== $args['vp_opts']['vp_items_style'] ) {
-                    $items_style_pref = '/' . $args['vp_opts']['vp_items_style'];
+                if ( 'default' !== $args['vp_opts']['items_style'] ) {
+                    $items_style_pref = '/' . $args['vp_opts']['items_style'];
                 }
                 visual_portfolio()->include_template( 'items-list/items-style' . $items_style_pref . '/image', $args );
                 visual_portfolio()->include_template( 'items-list/items-style' . $items_style_pref . '/meta', $args );
@@ -1736,22 +1758,115 @@ class Visual_Portfolio_Get {
     }
 
     /**
+     * Print item popup data.
+     *
+     * @param array $args - item args.
+     */
+    private static function item_popup_data( $args ) {
+        $popup_image = false;
+        $popup_video = false;
+
+        if ( isset( $args['allow_popup'] ) && $args['allow_popup'] ) {
+            if ( isset( $args['format_video_url'] ) && $args['format_video_url'] ) {
+                $popup_video = array(
+                    'url' => $args['format_video_url'],
+                );
+            } else {
+                $img_id = $args['image_id'] ? $args['image_id'] : $args['no_image'];
+
+                if ( $img_id ) {
+                    $attachment = get_post( $args['image_id'] );
+                    if ( $attachment && 'attachment' === $attachment->post_type ) {
+                        $img_meta    = wp_get_attachment_image_src( $args['image_id'], $args['img_size_popup'] );
+                        $img_md_meta = wp_get_attachment_image_src( $args['image_id'], $args['img_size_md_popup'] );
+                        $img_sm_meta = wp_get_attachment_image_src( $args['image_id'], $args['img_size_sm_popup'] );
+
+                        $popup_image = apply_filters(
+                            'vpf_extend_popup_image',
+                            array(
+                                'id'          => $args['image_id'],
+                                'title'       => $attachment->post_title,
+                                'description' => $attachment->post_content,
+                                'caption'     => wp_get_attachment_caption( $attachment->ID ),
+                                'alt'         => get_post_meta( $attachment->ID, '_wp_attachment_image_alt', true ),
+                                'url'         => $img_meta[0],
+                                'srcset'      => wp_get_attachment_image_srcset( $args['image_id'], $args['img_size_popup'] ),
+                                'width'       => $img_meta[1],
+                                'height'      => $img_meta[2],
+                                'md_url'      => $img_md_meta[0],
+                                'md_width'    => $img_md_meta[1],
+                                'md_height'   => $img_md_meta[2],
+                                'sm_url'      => $img_sm_meta[0],
+                                'sm_width'    => $img_sm_meta[1],
+                                'sm_height'   => $img_sm_meta[2],
+                            )
+                        );
+                    } elseif ( $args['image_id'] ) {
+                        $popup_image = apply_filters( 'vpf_extend_custom_popup_image', false, $args['image_id'] );
+                    }
+                }
+            }
+        }
+
+        ob_start();
+
+        if ( $popup_image ) {
+            $title_source       = $args['vp_opts']['items_click_action_popup_title_source'] ? $args['vp_opts']['items_click_action_popup_title_source'] : '';
+            $description_source = $args['vp_opts']['items_click_action_popup_description_source'] ? $args['vp_opts']['items_click_action_popup_description_source'] : '';
+            ?>
+            <div class="vp-portfolio__item-popup"
+                style="display: none;"
+                data-vp-popup-img="<?php echo esc_url( $popup_image['url'] ); ?>"
+                data-vp-popup-img-srcset="<?php echo esc_attr( $popup_image['srcset'] ); ?>"
+                data-vp-popup-img-size="<?php echo esc_attr( $popup_image['width'] . 'x' . $popup_image['height'] ); ?>"
+                data-vp-popup-md-img="<?php echo esc_url( $popup_image['md_url'] ); ?>"
+                data-vp-popup-md-img-size="<?php echo esc_attr( $popup_image['md_width'] . 'x' . $popup_image['md_height'] ); ?>"
+                data-vp-popup-sm-img="<?php echo esc_url( $popup_image['sm_url'] ); ?>"
+                data-vp-popup-sm-img-size="<?php echo esc_attr( $popup_image['sm_width'] . 'x' . $popup_image['sm_height'] ); ?>"
+            >
+                <?php
+                if ( isset( $popup_image[ $title_source ] ) && $popup_image[ $title_source ] ) {
+                    ?>
+                    <h3 class="vp-portfolio__item-popup-title"><?php echo esc_html( $popup_image[ $title_source ] ); ?></h3>
+                    <?php
+                }
+                if ( isset( $popup_image[ $description_source ] ) && $popup_image[ $description_source ] ) {
+                    ?>
+                    <div class="vp-portfolio__item-popup-description"><?php echo wp_kses_post( $popup_image[ $description_source ] ); ?></div>
+                    <?php
+                }
+                ?>
+            </div>
+            <?php
+        } elseif ( $popup_video ) {
+            ?>
+            <div class="vp-portfolio__item-popup"
+                style="display: none;"
+                data-vp-popup-video="<?php echo esc_url( $popup_video['url'] ); ?>"
+            ></div>
+            <?php
+        }
+
+        $popup_output = ob_get_clean();
+        $popup_output = apply_filters( 'vpf_print_popup_data', $popup_output, $args );
+
+        // phpcs:ignore
+        echo $popup_output;
+    }
+
+    /**
      * Print pagination
      *
      * @param array $vp_options - current vp_list options.
-     * @param array $args - pagination args.
-     *      'start_page'
-     *      'max_pages'
-     *      'next_page_url'.
      */
-    private static function pagination( $vp_options, $args ) {
-        if ( ! $vp_options['vp_pagination_style'] || ! $vp_options['vp_pagination'] ) {
+    public static function pagination( $vp_options ) {
+        if ( ! $vp_options['pagination_style'] || ! $vp_options['pagination'] ) {
             return;
         }
 
         // get options for the current pagination.
         $pagination_options      = array();
-        $pagination_options_slug = 'vp_pagination_' . $vp_options['vp_pagination_style'] . '__';
+        $pagination_options_slug = 'pagination_' . $vp_options['pagination_style'] . '__';
         foreach ( $vp_options as $k => $opt ) {
             // add option to array.
             if ( substr( $k, 0, strlen( $pagination_options_slug ) ) === $pagination_options_slug ) {
@@ -1766,22 +1881,18 @@ class Visual_Portfolio_Get {
         }
 
         $args = array(
-            'type'          => $vp_options['vp_pagination'],
-            'next_page_url' => $args['next_page_url'],
-            'start_page'    => $args['start_page'],
-            'max_pages'     => $args['max_pages'],
+            'type'          => $vp_options['pagination'],
+            'next_page_url' => $vp_options['next_page_url'],
+            'start_page'    => $vp_options['start_page'],
+            'max_pages'     => $vp_options['max_pages'],
             'class'         => 'vp-pagination',
-            'align'         => $vp_options['vp_pagination_align'],
             'opts'          => $pagination_options,
             'vp_opts'       => $vp_options,
         );
 
+        // No more posts.
         if ( ! $args['next_page_url'] ) {
             $args['class'] .= ' vp-pagination__no-more';
-        }
-
-        if ( $vp_options['vp_pagination_align'] ) {
-            $args['class'] .= ' vp-pagination__align-' . $vp_options['vp_pagination_align'];
         }
 
         ?>
@@ -1789,26 +1900,38 @@ class Visual_Portfolio_Get {
         <?php
 
         $pagination_style_pref = '';
-        if ( 'default' !== $vp_options['vp_pagination_style'] ) {
-            $pagination_style_pref = '/' . $vp_options['vp_pagination_style'];
+        if ( 'default' !== $vp_options['pagination_style'] ) {
+            $pagination_style_pref = '/' . $vp_options['pagination_style'];
         }
 
-        switch ( $vp_options['vp_pagination'] ) {
+        switch ( $vp_options['pagination'] ) {
             case 'infinite':
             case 'load-more':
-                if ( 'infinite' === $vp_options['vp_pagination'] ) {
-                    $args['text_load']     = $vp_options['vp_pagination_infinite_text_load'];
-                    $args['text_loading']  = $vp_options['vp_pagination_infinite_text_loading'];
-                    $args['text_end_list'] = $vp_options['vp_pagination_infinite_text_end_list'];
+                if ( 'infinite' === $vp_options['pagination'] ) {
+                    $args['text_load']     = $vp_options['pagination_infinite_text_load'];
+                    $args['text_loading']  = $vp_options['pagination_infinite_text_loading'];
+                    $args['text_end_list'] = $vp_options['pagination_infinite_text_end_list'];
                 } else {
-                    $args['text_load']     = $vp_options['vp_pagination_load_more_text_load'];
-                    $args['text_loading']  = $vp_options['vp_pagination_load_more_text_loading'];
-                    $args['text_end_list'] = $vp_options['vp_pagination_load_more_text_end_list'];
+                    $args['text_load']     = $vp_options['pagination_load_more_text_load'];
+                    $args['text_loading']  = $vp_options['pagination_load_more_text_loading'];
+                    $args['text_end_list'] = $vp_options['pagination_load_more_text_end_list'];
                 }
 
-                visual_portfolio()->include_template( 'items-list/pagination' . $pagination_style_pref . '/' . $vp_options['vp_pagination'], $args );
+                if ( ! $vp_options['pagination_hide_on_end'] || $args['next_page_url'] ) {
+                    visual_portfolio()->include_template( 'items-list/pagination' . $pagination_style_pref . '/' . $vp_options['pagination'], $args );
+                }
+
                 break;
             default:
+                // Scroll to top.
+                if ( $vp_options['pagination_paged__scroll_top'] ) {
+                    $args['class'] .= ' vp-pagination__scroll-top';
+
+                    if ( isset( $vp_options['pagination_paged__scroll_top_offset'] ) ) {
+                        $args['scroll_top_offset'] = $vp_options['pagination_paged__scroll_top_offset'];
+                    }
+                }
+
                 $pagination_links = paginate_links(
                     array(
                         'base'      => esc_url_raw(
@@ -1873,12 +1996,12 @@ class Visual_Portfolio_Get {
                             }
 
                             // skip arrows if disabled.
-                            if ( ! $vp_options['vp_pagination_paged__show_arrows'] && ( $arr['is_prev_arrow'] || $arr['is_next_arrow'] ) ) {
+                            if ( ! $vp_options['pagination_paged__show_arrows'] && ( $arr['is_prev_arrow'] || $arr['is_next_arrow'] ) ) {
                                 continue;
                             }
 
                             // skip numbers if disabled.
-                            if ( ! $vp_options['vp_pagination_paged__show_numbers'] && ! $arr['is_prev_arrow'] && ! $arr['is_next_arrow'] ) {
+                            if ( ! $vp_options['pagination_paged__show_numbers'] && ! $arr['is_prev_arrow'] && ! $arr['is_next_arrow'] ) {
                                 continue;
                             }
 
@@ -1889,10 +2012,6 @@ class Visual_Portfolio_Get {
 
                 if ( ! empty( $filtered_links ) ) {
                     $args['items'] = $filtered_links;
-                    if ( $vp_options['vp_pagination_paged__show_arrows'] ) {
-                        $args['arrows_icon_prev'] = $vp_options['vp_pagination_paged__arrows_icon_prev'];
-                        $args['arrows_icon_next'] = $vp_options['vp_pagination_paged__arrows_icon_next'];
-                    }
                     visual_portfolio()->include_template( 'items-list/pagination' . $pagination_style_pref . '/paged', $args );
                 }
 
